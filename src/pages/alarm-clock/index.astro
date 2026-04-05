@@ -173,8 +173,34 @@ const faqItems = [
     </div>
   </section>
 
-  <!-- Active Alarms -->
-  <section class="mx-auto max-w-2xl px-4 pb-8">
+  <!-- Active Alarm Banner (shown when alarm is set) -->
+  <section id="alarm-active-banner" class="mx-auto max-w-2xl px-4 pb-8 hidden">
+    <div class="card border-amber-500/50 bg-gradient-to-b from-amber-500/10 to-slate-900 text-center py-8">
+      <!-- Circular countdown ring -->
+      <div class="relative mx-auto mb-4 w-56 h-56 sm:w-64 sm:h-64">
+        <svg class="w-full h-full" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="4" class="text-slate-700" />
+          <circle id="alarm-progress-ring" cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="565.48" stroke-dashoffset="0" class="progress-ring-circle text-amber-500" />
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <p id="banner-alarm-label" class="text-sm text-amber-400 mb-1 truncate max-w-[160px]"></p>
+          <p id="banner-countdown" class="font-clock text-4xl sm:text-5xl text-slate-50 tracking-wider">--:--:--</p>
+          <p id="banner-target-time" class="font-clock text-lg text-amber-500 mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Status text -->
+      <p class="text-slate-400 text-sm mb-4">Alarm is active — keep this tab open</p>
+
+      <!-- Prominent Stop button -->
+      <button id="banner-stop-btn" type="button" class="btn-danger px-10 py-3 text-lg mx-auto">
+        Stop Alarm
+      </button>
+    </div>
+  </section>
+
+  <!-- Active Alarms List (multiple alarms) -->
+  <section id="alarm-list-section" class="mx-auto max-w-2xl px-4 pb-8">
     <h2 class="mb-4 text-center font-display text-lg font-semibold text-slate-50">Active Alarms</h2>
     <div id="active-alarms" class="space-y-2">
       <p id="no-alarms-msg" class="text-center text-sm text-slate-500">No alarms set yet</p>
@@ -299,6 +325,15 @@ const faqItems = [
   const enableSoundBtn = document.getElementById('enable-sound-btn');
   const fullscreenBtn = document.getElementById('fullscreen-btn');
 
+  // Banner elements
+  const alarmBanner = document.getElementById('alarm-active-banner');
+  const alarmListSection = document.getElementById('alarm-list-section');
+  const bannerCountdown = document.getElementById('banner-countdown');
+  const bannerTargetTime = document.getElementById('banner-target-time');
+  const bannerAlarmLabel = document.getElementById('banner-alarm-label');
+  const bannerStopBtn = document.getElementById('banner-stop-btn');
+  const alarmProgressRing = document.getElementById('alarm-progress-ring');
+
   // ---- State ----
   let isPM = false;
   let testingSound = false;
@@ -326,9 +361,10 @@ const faqItems = [
   }
 
   // The AlarmClock class already updates the clock display via its tick.
-  // We hook into onTick to update our extra UI.
+  // We hook into onTick to update our extra UI + banner countdown.
   alarmClock.onTick = () => {
     updateClockMeta();
+    updateBanner();
   };
 
   // ---- Alarm Ring Handler ----
@@ -414,15 +450,82 @@ const faqItems = [
     });
   });
 
-  // ---- Render Active Alarms ----
+  // ---- Banner: show prominent countdown when alarm is active ----
+  function updateBanner() {
+    const alarms = alarmClock.getAlarms();
+
+    if (alarms.length === 0) {
+      // Hide banner
+      if (alarmBanner) alarmBanner.classList.add('hidden');
+      return;
+    }
+
+    // Show banner with the nearest alarm
+    if (alarmBanner) alarmBanner.classList.remove('hidden');
+
+    // Find next alarm (soonest)
+    const now = new Date();
+    let nearest = alarms[0];
+    let nearestDiff = Infinity;
+
+    for (const a of alarms) {
+      const target = new Date(now);
+      target.setHours(a.hour, a.minute, 0, 0);
+      if (target <= now) target.setDate(target.getDate() + 1);
+      const diff = target.getTime() - now.getTime();
+      if (diff < nearestDiff) {
+        nearestDiff = diff;
+        nearest = a;
+      }
+    }
+
+    // Update banner content
+    const displayH = nearest.hour % 12 || 12;
+    const period = nearest.hour >= 12 ? 'PM' : 'AM';
+    const targetStr = `${padZero(displayH)}:${padZero(nearest.minute)} ${period}`;
+
+    if (bannerTargetTime) bannerTargetTime.textContent = targetStr;
+    if (bannerAlarmLabel) {
+      bannerAlarmLabel.textContent = nearest.label || '';
+    }
+
+    // Countdown
+    const diffSec = Math.floor(nearestDiff / 1000);
+    const ch = Math.floor(diffSec / 3600);
+    const cm = Math.floor((diffSec % 3600) / 60);
+    const cs = diffSec % 60;
+    if (bannerCountdown) {
+      bannerCountdown.textContent = `${padZero(ch)}:${padZero(cm)}:${padZero(cs)}`;
+    }
+
+    // Progress ring (fill based on time elapsed out of total duration)
+    // Use 12h as max ring or actual time remaining ratio
+    if (alarmProgressRing) {
+      const CIRCUMFERENCE = 2 * Math.PI * 90; // 565.48
+      const maxDuration = 12 * 3600; // 12 hours max
+      const elapsed = maxDuration - Math.min(diffSec, maxDuration);
+      const progress = elapsed / maxDuration;
+      alarmProgressRing.style.strokeDashoffset = String(progress * CIRCUMFERENCE);
+    }
+  }
+
+  // ---- Render Active Alarms List ----
   function renderAlarms() {
     const alarms = alarmClock.getAlarms();
 
     if (!activeAlarmsEl) return;
 
+    // Update banner
+    updateBanner();
+
     if (alarms.length === 0) {
       activeAlarmsEl.innerHTML = '<p id="no-alarms-msg" class="text-center text-sm text-slate-500">No alarms set yet</p>';
+      if (alarmListSection) alarmListSection.querySelector('h2')!.textContent = 'Active Alarms';
       return;
+    }
+
+    if (alarmListSection) {
+      alarmListSection.querySelector('h2')!.textContent = `Active Alarms (${alarms.length})`;
     }
 
     activeAlarmsEl.innerHTML = alarms
@@ -431,24 +534,26 @@ const faqItems = [
         const period = a.hour >= 12 ? 'PM' : 'AM';
         const timeStr = `${padZero(displayH)}:${padZero(a.minute)} ${period}`;
         const label = a.label || 'Alarm';
-        // Find sound name from the select options
         const soundOption = soundSelect?.querySelector(`option[value="${a.soundUrl}"]`) as HTMLOptionElement | null;
         const soundName = soundOption?.dataset.name || 'Classic Ring';
 
         return `
-          <div class="card flex items-center justify-between gap-3" data-alarm-id="${a.id}">
-            <div class="flex-1">
-              <span class="font-clock text-lg text-amber-500">${timeStr}</span>
-              <span class="ml-2 text-sm text-slate-400">${label}</span>
-              <span class="ml-2 text-xs text-slate-600">${soundName}</span>
+          <div class="card flex items-center justify-between gap-3 border-amber-500/30 transition-all hover:border-amber-500/60" data-alarm-id="${a.id}">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0"></div>
+              <div class="min-w-0">
+                <span class="font-clock text-lg text-amber-500">${timeStr}</span>
+                <span class="ml-2 text-sm text-slate-300">${label}</span>
+                <span class="ml-2 text-xs text-slate-500">${soundName}</span>
+              </div>
             </div>
             <button
               type="button"
-              class="delete-alarm-btn text-slate-500 transition-colors hover:text-red-500"
+              class="delete-alarm-btn flex-shrink-0 rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-400 transition-colors hover:border-red-500 hover:text-red-500"
               data-alarm-id="${a.id}"
               aria-label="Delete alarm"
             >
-              &#10005;
+              Delete
             </button>
           </div>
         `;
@@ -547,6 +652,17 @@ const faqItems = [
     }
   }
   checkMobileAudio();
+
+  // ---- Banner Stop Button ----
+  if (bannerStopBtn) {
+    bannerStopBtn.addEventListener('click', () => {
+      // Remove all alarms
+      const alarms = alarmClock.getAlarms();
+      alarms.forEach(a => alarmClock.removeAlarm(a.id));
+      alarmClock.stopAlarm();
+      renderAlarms();
+    });
+  }
 
   // ---- Fullscreen ----
   if (fullscreenBtn) {
