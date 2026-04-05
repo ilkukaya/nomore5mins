@@ -5,6 +5,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
 import AdUnit from '../../components/AdUnit.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const faqItems = [
   {
@@ -108,6 +110,13 @@ const faqItems = [
       seconds of inactivity.
     </p>
   </SEOContent>
+
+  <ProductGrid
+    title="Turn Your Screen Into a Smart Nightstand"
+    subtitle="Pair your bedside clock with these sleep essentials"
+    products={products.sleep.slice(0, 3)}
+    columns={3}
+  />
 
   <FAQ items={faqItems} />
 </ToolLayout>

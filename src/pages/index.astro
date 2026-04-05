@@ -4,6 +4,8 @@ import ClockDisplay from '../components/ClockDisplay.astro';
 import FAQ from '../components/FAQ.astro';
 import SEOContent from '../components/SEOContent.astro';
 import AdUnit from '../components/AdUnit.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import products from '../data/products.json';
 
 const faqItems = [
   {
@@ -133,6 +135,13 @@ const faqItems = [
       right in the browser, on any device.
     </p>
   </SEOContent>
+
+  <ProductGrid
+    title="Sleep Better Tonight"
+    subtitle="Top-rated products to help you wake up refreshed"
+    products={products.sleep.slice(0, 3)}
+    columns={3}
+  />
 
   <!-- FAQ Section -->
   <FAQ items={faqItems} />

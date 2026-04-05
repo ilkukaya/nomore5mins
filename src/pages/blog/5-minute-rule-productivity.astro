@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 ---
 
 <BaseLayout
@@ -50,6 +52,15 @@ import Footer from '../../components/Footer.astro';
       </div>
     </article>
   </main>
+
+  <div class="mx-auto max-w-3xl px-4">
+    <ProductGrid
+      title="Productivity Boosters"
+      subtitle="Tools to help you make every 5 minutes count"
+      products={products.productivity.slice(0, 2)}
+      columns={2}
+    />
+  </div>
 
   <Footer />
 </BaseLayout>

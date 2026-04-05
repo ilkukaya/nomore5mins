@@ -5,6 +5,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const faqItems = [
   {
@@ -211,6 +213,13 @@ const faqItems = [
         audible alarm brings you back when time is up — no need to watch the clock.
       </p>
     </SEOContent>
+
+    <ProductGrid
+      title="Stay Focused, Get More Done"
+      subtitle="Tools to boost your productivity between timers"
+      products={products.productivity}
+      columns={2}
+    />
 
     <FAQ items={faqItems} />
 

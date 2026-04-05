@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 ---
 
 <BaseLayout
@@ -49,6 +51,15 @@ import Footer from '../../components/Footer.astro';
       </div>
     </article>
   </main>
+
+  <div class="mx-auto max-w-3xl px-4">
+    <ProductGrid
+      title="Study Gear That Actually Helps"
+      subtitle="Recommended tools for focused study sessions"
+      products={[products.productivity[0], products.productivity[1], products.productivity[2]]}
+      columns={3}
+    />
+  </div>
 
   <Footer />
 </BaseLayout>

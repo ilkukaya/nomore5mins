@@ -4,6 +4,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const faqItems = [
   {
@@ -84,6 +86,13 @@ const faqItems = [
         quickly find a specific city or add more cities to your display.
       </p>
     </SEOContent>
+
+    <ProductGrid
+      title="Work Across Time Zones"
+      subtitle="Essential tools for remote workers and global teams"
+      products={products.productivity.slice(0, 2)}
+      columns={2}
+    />
 
     <FAQ items={faqItems} />
 

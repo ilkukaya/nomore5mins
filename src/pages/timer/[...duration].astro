@@ -5,6 +5,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 import presets from '../../content/timers/presets.json';
 
 export function getStaticPaths() {
@@ -164,6 +166,13 @@ const otherTimers = presets
         ))}
       </div>
     </section>
+
+    <ProductGrid
+      title="Productivity Essentials"
+      subtitle="Pair your timer with these focus tools"
+      products={products.productivity.slice(0, 2)}
+      columns={2}
+    />
 
     <FAQ items={faqItems} />
 

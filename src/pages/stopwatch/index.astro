@@ -5,6 +5,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const faqItems = [
   {
@@ -114,6 +116,13 @@ const faqItems = [
         separate timing device.
       </p>
     </SEOContent>
+
+    <ProductGrid
+      title="Gear Up for Better Performance"
+      subtitle="Track your time, improve your results"
+      products={[...products.fitness, products.productivity[0]]}
+      columns={3}
+    />
 
     <FAQ items={faqItems} />
 
