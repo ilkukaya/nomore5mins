@@ -1,0 +1,23 @@
+---
+interface Props {
+  id: string;
+  size?: 'large' | 'medium' | 'small';
+}
+
+const { id, size = 'large' } = Astro.props;
+
+const sizeClasses: Record<string, string> = {
+  large: 'clock-text-responsive',
+  medium: 'clock-text-medium',
+  small: 'text-4xl md:text-5xl',
+};
+---
+
+<div
+  id={id}
+  class:list={['clock-display text-center font-clock font-bold', sizeClasses[size]]}
+  aria-live="polite"
+  role="timer"
+>
+  --:--:--
+</div>

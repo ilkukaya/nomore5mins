@@ -1,0 +1,62 @@
+<button
+  id="theme-toggle"
+  type="button"
+  class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-50"
+  aria-label="Toggle light/dark theme"
+>
+  <!-- Sun icon (shown in dark mode) -->
+  <svg
+    class="theme-icon-sun h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    ></path>
+  </svg>
+  <!-- Moon icon (shown in light mode) -->
+  <svg
+    class="theme-icon-moon hidden h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    ></path>
+  </svg>
+</button>
+
+<script is:inline>
+  (function () {
+    function updateIcons() {
+      var isLight = document.documentElement.classList.contains('light');
+      var suns = document.querySelectorAll('.theme-icon-sun');
+      var moons = document.querySelectorAll('.theme-icon-moon');
+      suns.forEach(function (el) {
+        el.classList.toggle('hidden', isLight);
+      });
+      moons.forEach(function (el) {
+        el.classList.toggle('hidden', !isLight);
+      });
+    }
+
+    updateIcons();
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('#theme-toggle');
+      if (!btn) return;
+      document.documentElement.classList.toggle('light');
+      var isLight = document.documentElement.classList.contains('light');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      updateIcons();
+    });
+  })();
+</script>

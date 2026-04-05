@@ -1,0 +1,17 @@
+---
+interface Props {
+  slot: string;
+  format?: string;
+}
+
+const { slot: adSlot, format = 'auto' } = Astro.props;
+---
+
+<!-- Ad placement: {adSlot} | Format: {format} -->
+<div
+  class="ad-unit flex items-center justify-center py-2"
+  data-ad-slot={adSlot}
+  data-ad-format={format}
+>
+  <!-- Future AdSense integration -->
+</div>

@@ -1,0 +1,112 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navLinks = [
+  { label: 'Alarm Clock', href: '/alarm-clock/' },
+  { label: 'Timer', href: '/timer/' },
+  { label: 'Stopwatch', href: '/stopwatch/' },
+  { label: 'Pomodoro', href: '/pomodoro/' },
+  { label: 'World Clock', href: '/world-clock/' },
+  { label: 'Clock', href: '/clock/' },
+];
+---
+
+<header
+  class="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-lg transition-colors"
+>
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-1 font-display text-xl">
+      <span class="font-light text-slate-50">NoMore</span><span
+        class="font-bold text-amber-500"><s>5</s>Mins</span
+      >
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden items-center gap-6 md:flex" aria-label="Main navigation">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="text-sm font-medium text-slate-400 transition-colors hover:text-amber-500"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <ThemeToggle />
+    </nav>
+
+    <!-- Mobile Menu Button -->
+    <div class="flex items-center gap-3 md:hidden">
+      <ThemeToggle />
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="text-slate-400 hover:text-slate-50"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            id="menu-icon-open"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+          <path
+            id="menu-icon-close"
+            class="hidden"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <nav
+    id="mobile-menu"
+    class="hidden border-t border-slate-800 md:hidden"
+    aria-label="Mobile navigation"
+  >
+    <div class="flex flex-col gap-1 px-4 py-3">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-amber-500"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+
+    if (btn && menu && iconOpen && iconClose) {
+      btn.addEventListener('click', function () {
+        const isOpen = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden');
+        iconClose.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    }
+  })();
+</script>

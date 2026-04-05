@@ -1,0 +1,246 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+import AdUnit from '../../components/AdUnit.astro';
+
+const faqItems = [
+  {
+    question: 'How accurate is this online clock?',
+    answer: 'The clock uses your device\'s system time, which is typically synced with internet time servers via NTP. It is accurate to within a second of the official time for your time zone.',
+  },
+  {
+    question: 'Can I use this as a classroom clock?',
+    answer: 'Absolutely. Click the Full Screen button to display the clock across your entire screen. The large, clear digits are easily readable from across a room, making it perfect for classrooms, conference rooms, and presentations.',
+  },
+  {
+    question: 'Does the clock work offline?',
+    answer: 'Yes. Once the page has loaded, the clock runs entirely in your browser using your device\'s local time. No internet connection is needed to keep it running.',
+  },
+  {
+    question: 'How do I change the clock color?',
+    answer: 'Use the color circles in the controls bar at the bottom of the page. You can choose from Amber, Green, Blue, Red, White, or Cyan themes. Each theme changes both the text color and the glow effect.',
+  },
+  {
+    question: 'Will the cursor disappear in full-screen mode?',
+    answer: 'Yes. After 3 seconds of inactivity, the cursor automatically hides for a cleaner display. Simply move the mouse to bring it back.',
+  },
+];
+---
+
+<ToolLayout
+  title="Online Clock - Full Screen Digital Clock | NoMore5Mins"
+  description="Free full-screen digital clock. Perfect for classrooms, offices, and bedside displays. Clean, beautiful, and distraction-free."
+  toolName="NoMore5Mins Digital Clock"
+  primaryKeyword="online clock"
+>
+  <div class="mx-auto max-w-5xl px-4">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Clock', href: '/clock/' },
+    ]} />
+  </div>
+
+  <!-- Main clock area -->
+  <section class="flex min-h-[70vh] flex-col items-center justify-center px-4">
+    <ClockDisplay id="fullscreen-clock" size="large" />
+    <div id="clock-date" class="mt-4 font-clock text-lg text-slate-400 md:text-2xl">
+      <span id="clock-day"></span>
+      <span class="mx-2 text-slate-600">|</span>
+      <span id="clock-date-text"></span>
+    </div>
+  </section>
+
+  <!-- Controls bar -->
+  <section class="mx-auto max-w-3xl px-4 pb-8">
+    <div class="card flex flex-wrap items-center justify-center gap-4 p-4">
+      <!-- 12h/24h toggle -->
+      <button id="btn-format" class="btn-secondary !px-3 !py-2 text-sm" aria-label="Toggle 12/24 hour format">
+        12H
+      </button>
+
+      <!-- Seconds toggle -->
+      <button id="btn-seconds" class="btn-secondary !px-3 !py-2 text-sm" aria-label="Toggle seconds display">
+        Seconds: ON
+      </button>
+
+      <!-- Date toggle -->
+      <button id="btn-date" class="btn-secondary !px-3 !py-2 text-sm" aria-label="Toggle date display">
+        Date: ON
+      </button>
+
+      <!-- Color theme picker -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">Theme:</span>
+        <button class="color-btn h-6 w-6 rounded-full bg-amber-500 ring-2 ring-amber-500 ring-offset-2 ring-offset-slate-900" data-color="amber" aria-label="Amber theme"></button>
+        <button class="color-btn h-6 w-6 rounded-full bg-green-500 ring-offset-2 ring-offset-slate-900" data-color="green" aria-label="Green theme"></button>
+        <button class="color-btn h-6 w-6 rounded-full bg-blue-500 ring-offset-2 ring-offset-slate-900" data-color="blue" aria-label="Blue theme"></button>
+        <button class="color-btn h-6 w-6 rounded-full bg-red-500 ring-offset-2 ring-offset-slate-900" data-color="red" aria-label="Red theme"></button>
+        <button class="color-btn h-6 w-6 rounded-full bg-white ring-offset-2 ring-offset-slate-900" data-color="white" aria-label="White theme"></button>
+        <button class="color-btn h-6 w-6 rounded-full bg-cyan-400 ring-offset-2 ring-offset-slate-900" data-color="cyan" aria-label="Cyan theme"></button>
+      </div>
+
+      <!-- Full Screen button -->
+      <button id="btn-fullscreen" class="btn-primary !px-3 !py-2 text-sm" aria-label="Enter full screen">
+        Full Screen
+      </button>
+    </div>
+
+    <!-- Watermark -->
+    <div class="mt-2 text-right text-xs text-slate-600">NoMore5Mins</div>
+  </section>
+
+  <AdUnit slot="mid" format="auto" />
+
+  <SEOContent title="About the Full-Screen Clock">
+    <p>
+      The NoMore5Mins full-screen digital clock is designed for clarity and simplicity.
+      Whether you need a large visible clock for your classroom, a bedside display, or a
+      conference room timepiece, this free online clock delivers crisp, readable digits
+      on any screen size.
+    </p>
+    <p>
+      Customize the display with six color themes, toggle between 12-hour and 24-hour
+      formats, and show or hide seconds and the date. Enter full-screen mode for a
+      completely distraction-free experience where even the cursor hides after a few
+      seconds of inactivity.
+    </p>
+  </SEOContent>
+
+  <FAQ items={faqItems} />
+</ToolLayout>
+
+<script>
+  const clockEl = document.getElementById('fullscreen-clock') as HTMLElement;
+  const dayEl = document.getElementById('clock-day') as HTMLElement;
+  const dateTextEl = document.getElementById('clock-date-text') as HTMLElement;
+  const dateWrapper = document.getElementById('clock-date') as HTMLElement;
+
+  const btnFormat = document.getElementById('btn-format') as HTMLButtonElement;
+  const btnSeconds = document.getElementById('btn-seconds') as HTMLButtonElement;
+  const btnDate = document.getElementById('btn-date') as HTMLButtonElement;
+  const btnFullscreen = document.getElementById('btn-fullscreen') as HTMLButtonElement;
+  const colorBtns = document.querySelectorAll('.color-btn');
+
+  let is24h = false;
+  let showSeconds = true;
+  let showDate = true;
+
+  const colorMap: Record<string, { color: string; glow: string }> = {
+    amber:  { color: '#f59e0b', glow: 'rgba(245,158,11,' },
+    green:  { color: '#22c55e', glow: 'rgba(34,197,94,' },
+    blue:   { color: '#3b82f6', glow: 'rgba(59,130,246,' },
+    red:    { color: '#ef4444', glow: 'rgba(239,68,68,' },
+    white:  { color: '#f8fafc', glow: 'rgba(248,250,252,' },
+    cyan:   { color: '#22d3ee', glow: 'rgba(34,211,238,' },
+  };
+
+  let currentColor = 'amber';
+
+  function applyColor(name: string) {
+    currentColor = name;
+    const c = colorMap[name];
+    if (!c) return;
+    clockEl.style.color = c.color;
+    clockEl.style.textShadow = `0 0 20px ${c.glow}0.5), 0 0 40px ${c.glow}0.3), 0 0 80px ${c.glow}0.1)`;
+    // Update active ring
+    colorBtns.forEach((btn) => {
+      const el = btn as HTMLElement;
+      if (el.dataset.color === name) {
+        el.classList.add('ring-2');
+        el.style.setProperty('--tw-ring-color', c.color);
+      } else {
+        el.classList.remove('ring-2');
+      }
+    });
+  }
+
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    let suffix = '';
+    if (!is24h) {
+      suffix = hours >= 12 ? ' PM' : ' AM';
+      hours = hours % 12 || 12;
+    }
+
+    const hh = String(hours).padStart(2, '0');
+    const mm = String(minutes).padStart(2, '0');
+    const ss = String(seconds).padStart(2, '0');
+
+    clockEl.textContent = showSeconds ? `${hh}:${mm}:${ss}${suffix}` : `${hh}:${mm}${suffix}`;
+
+    // Date
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    dayEl.textContent = days[now.getDay()];
+    dateTextEl.textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  }
+
+  // Controls
+  btnFormat.addEventListener('click', () => {
+    is24h = !is24h;
+    btnFormat.textContent = is24h ? '24H' : '12H';
+    updateClock();
+  });
+
+  btnSeconds.addEventListener('click', () => {
+    showSeconds = !showSeconds;
+    btnSeconds.textContent = `Seconds: ${showSeconds ? 'ON' : 'OFF'}`;
+    updateClock();
+  });
+
+  btnDate.addEventListener('click', () => {
+    showDate = !showDate;
+    btnDate.textContent = `Date: ${showDate ? 'ON' : 'OFF'}`;
+    dateWrapper.style.display = showDate ? '' : 'none';
+  });
+
+  colorBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const color = (btn as HTMLElement).dataset.color;
+      if (color) applyColor(color);
+    });
+  });
+
+  // Full screen
+  btnFullscreen.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      document.body.classList.add('fullscreen-mode');
+    } else {
+      document.exitFullscreen();
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  // Auto-hide cursor after 3s inactivity
+  let cursorTimeout: ReturnType<typeof setTimeout>;
+  function resetCursorTimer() {
+    document.body.classList.remove('cursor-hidden');
+    clearTimeout(cursorTimeout);
+    cursorTimeout = setTimeout(() => {
+      if (document.fullscreenElement) {
+        document.body.classList.add('cursor-hidden');
+      }
+    }, 3000);
+  }
+  document.addEventListener('mousemove', resetCursorTimer);
+  document.addEventListener('touchstart', resetCursorTimer);
+
+  // Init
+  applyColor('amber');
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>

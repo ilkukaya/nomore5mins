@@ -1,0 +1,81 @@
+---
+const toolLinks = [
+  { label: 'Alarm Clock', href: '/alarm-clock/' },
+  { label: 'Timer', href: '/timer/' },
+  { label: 'Stopwatch', href: '/stopwatch/' },
+  { label: 'Pomodoro', href: '/pomodoro/' },
+  { label: 'World Clock', href: '/world-clock/' },
+  { label: 'Clock', href: '/clock/' },
+];
+
+const infoLinks = [
+  { label: 'About', href: '/about/' },
+  { label: 'Privacy Policy', href: '/privacy/' },
+  { label: 'Terms of Service', href: '/terms/' },
+];
+---
+
+<footer class="border-t border-slate-800 bg-slate-950 transition-colors">
+  <div class="mx-auto max-w-7xl px-4 py-12">
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Brand -->
+      <div class="sm:col-span-2 lg:col-span-1">
+        <a href="/" class="inline-block font-display text-xl">
+          <span class="font-light text-slate-50">NoMore</span><span
+            class="font-bold text-amber-500"><s>5</s>Mins</span
+          >
+        </a>
+        <p class="mt-2 text-sm text-slate-400">
+          No More 5 Minutes. Wake Up Now.
+        </p>
+      </div>
+
+      <!-- Tools -->
+      <div>
+        <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-50">
+          Tools
+        </h3>
+        <ul class="space-y-2">
+          {
+            toolLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-slate-400 transition-colors hover:text-amber-500"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-50">
+          Info
+        </h3>
+        <ul class="space-y-2">
+          {
+            infoLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-slate-400 transition-colors hover:text-amber-500"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="mt-10 border-t border-slate-800 pt-6 text-center text-sm text-slate-400">
+      <p>&copy; 2026 NoMore5Mins. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

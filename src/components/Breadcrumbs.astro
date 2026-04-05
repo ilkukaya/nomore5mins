@@ -1,0 +1,53 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+const siteUrl = 'https://nomore5mins.netlify.app';
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: item.href.startsWith('http') ? item.href : new URL(item.href, siteUrl).href,
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class="py-3 text-sm">
+  <ol class="flex flex-wrap items-center gap-1 text-slate-400">
+    {
+      items.map((item, index) => (
+        <>
+          {index > 0 && <li aria-hidden="true" class="mx-1 text-slate-600">/</li>}
+          <li>
+            {index === items.length - 1 ? (
+              <span class="text-slate-50" aria-current="page">
+                {item.label}
+              </span>
+            ) : (
+              <a
+                href={item.href}
+                class="transition-colors hover:text-amber-500"
+              >
+                {item.label}
+              </a>
+            )}
+          </li>
+        </>
+      ))
+    }
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />

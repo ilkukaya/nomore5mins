@@ -1,0 +1,570 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import sounds from '../../data/sounds.json';
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Alarm Clock', href: '/alarm-clock/' },
+];
+
+const quickAlarms = [
+  { label: '5:00 AM', hour: 5, minute: 0 },
+  { label: '5:30 AM', hour: 5, minute: 30 },
+  { label: '6:00 AM', hour: 6, minute: 0 },
+  { label: '6:30 AM', hour: 6, minute: 30 },
+  { label: '7:00 AM', hour: 7, minute: 0 },
+  { label: '7:30 AM', hour: 7, minute: 30 },
+  { label: '8:00 AM', hour: 8, minute: 0 },
+  { label: '9:00 AM', hour: 9, minute: 0 },
+];
+
+const faqItems = [
+  {
+    question: 'How do I set an alarm on NoMore5Mins?',
+    answer: 'Select the hour, minute, and AM/PM using the pickers, choose an alarm sound, and click "Set Alarm." You can also use the quick alarm buttons to set common wake-up times with a single click.',
+  },
+  {
+    question: 'Can I set multiple alarms at the same time?',
+    answer: 'Yes! You can set as many alarms as you need. Each alarm appears in the active alarms list where you can manage or delete them individually.',
+  },
+  {
+    question: 'What alarm sounds are available?',
+    answer: 'NoMore5Mins offers 8 alarm sounds: Classic Ring, Digital Beep, Gentle Chime, Morning Birds, Rooster Crow, Nuclear Alert, Piano Melody, and Ocean Waves. You can preview each sound before setting your alarm.',
+  },
+  {
+    question: 'Will the alarm work if my computer goes to sleep?',
+    answer: 'NoMore5Mins uses the Wake Lock API to try to keep your screen awake while an alarm is set. However, if your device goes to sleep or the browser tab is closed, the alarm will not ring. Keep the tab open and adjust your power settings for best results.',
+  },
+  {
+    question: 'How does the snooze feature work?',
+    answer: 'When your alarm rings, you can snooze it for 5 more minutes. But true to our name, NoMore5Mins limits you to 3 snoozes. After that, you will see a message reminding you it is time to get up!',
+  },
+  {
+    question: 'Do my alarms save if I refresh the page?',
+    answer: 'Yes. All alarms are saved in your browser\'s local storage, so they persist across page refreshes. They will remain set until you delete them or clear your browser data.',
+  },
+  {
+    question: 'Why do I need to click "Enable Sound" on mobile?',
+    answer: 'Mobile browsers require a user interaction before playing audio. Tapping "Enable Sound" unlocks the audio system so your alarm can ring when the time comes.',
+  },
+  {
+    question: 'Can I use this alarm clock in fullscreen mode?',
+    answer: 'Yes! Click the fullscreen button to turn your screen into a bedside clock. The cursor auto-hides after a few seconds of inactivity for a distraction-free display.',
+  },
+];
+---
+
+<ToolLayout
+  title="Online Alarm Clock - Set Free Alarm | NoMore5Mins"
+  description="Set a free online alarm clock. Choose from 8 alarm sounds, set multiple alarms, and never oversleep again. No more 5 minutes!"
+  toolName="NoMore5Mins Online Alarm Clock"
+  primaryKeyword="online alarm clock"
+>
+  <div class="mx-auto max-w-4xl px-4">
+    <Breadcrumbs items={breadcrumbItems} />
+  </div>
+
+  <!-- Main Clock Display -->
+  <section class="mx-auto max-w-4xl px-4 pb-8 pt-4 text-center">
+    <ClockDisplay id="alarm-clock-display" size="large" />
+
+    <div class="mt-4 flex items-center justify-center gap-4 text-lg text-slate-400">
+      <span id="alarm-ampm" class="font-clock text-amber-500">--</span>
+      <span class="text-slate-600">|</span>
+      <span id="alarm-date" class="text-sm">Loading date...</span>
+    </div>
+
+    <p id="alarm-countdown" class="mt-3 text-sm text-slate-400"></p>
+  </section>
+
+  <!-- Alarm Controls -->
+  <section class="mx-auto max-w-2xl px-4 pb-8">
+    <div class="card">
+      <h2 class="mb-6 text-center font-display text-xl font-bold text-slate-50">Set an Alarm</h2>
+
+      <!-- Time Pickers -->
+      <div class="mb-6 flex flex-wrap items-center justify-center gap-3">
+        <select id="alarm-hour" class="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-center font-clock text-xl text-slate-50 focus:border-amber-500 focus:outline-none" aria-label="Hour">
+          {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+            <option value={h} selected={h === 7}>{String(h).padStart(2, '0')}</option>
+          ))}
+        </select>
+
+        <span class="font-clock text-2xl text-amber-500">:</span>
+
+        <select id="alarm-minute" class="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-center font-clock text-xl text-slate-50 focus:border-amber-500 focus:outline-none" aria-label="Minute">
+          {Array.from({ length: 60 }, (_, i) => i).map((m) => (
+            <option value={m} selected={m === 0}>{String(m).padStart(2, '0')}</option>
+          ))}
+        </select>
+
+        <button id="alarm-period-toggle" type="button" class="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 font-clock text-xl text-amber-500 transition-colors hover:border-amber-500 focus:outline-none" aria-label="Toggle AM/PM">
+          AM
+        </button>
+      </div>
+
+      <!-- Label -->
+      <div class="mb-4">
+        <input
+          type="text"
+          id="alarm-label"
+          placeholder="Alarm label (optional)"
+          maxlength="50"
+          class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-50 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+        />
+      </div>
+
+      <!-- Sound Selector -->
+      <div class="mb-4">
+        <label for="alarm-sound" class="mb-1 block text-sm text-slate-400">Alarm Sound</label>
+        <select id="alarm-sound" class="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-50 focus:border-amber-500 focus:outline-none">
+          {sounds.map((s) => (
+            <option value={s.file} data-name={s.name}>{s.name} — {s.description}</option>
+          ))}
+        </select>
+      </div>
+
+      <!-- Volume -->
+      <div class="mb-6">
+        <label for="alarm-volume" class="mb-1 block text-sm text-slate-400">
+          Volume: <span id="volume-display">80</span>%
+        </label>
+        <input
+          type="range"
+          id="alarm-volume"
+          min="0"
+          max="100"
+          value="80"
+          class="w-full accent-amber-500"
+        />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="test-sound-btn" type="button" class="btn-secondary text-sm">
+          Test Sound
+        </button>
+        <button id="set-alarm-btn" type="button" class="btn-primary px-8 py-3 text-lg">
+          Set Alarm
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Alarm Buttons -->
+  <section class="mx-auto max-w-2xl px-4 pb-8">
+    <h2 class="mb-4 text-center font-display text-lg font-semibold text-slate-50">Quick Alarms</h2>
+    <div class="grid grid-cols-4 gap-2 sm:gap-3">
+      {quickAlarms.map((qa) => (
+        <button
+          type="button"
+          class="quick-alarm-btn rounded-lg border border-slate-700 bg-slate-900 px-2 py-3 text-center font-clock text-sm text-slate-50 transition-colors hover:border-amber-500 hover:bg-slate-800 sm:text-base"
+          data-hour={qa.hour}
+          data-minute={qa.minute}
+        >
+          {qa.label}
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <!-- Active Alarms -->
+  <section class="mx-auto max-w-2xl px-4 pb-8">
+    <h2 class="mb-4 text-center font-display text-lg font-semibold text-slate-50">Active Alarms</h2>
+    <div id="active-alarms" class="space-y-2">
+      <p id="no-alarms-msg" class="text-center text-sm text-slate-500">No alarms set yet</p>
+    </div>
+  </section>
+
+  <!-- Enable Sound Button (mobile audio unlock) -->
+  <div id="enable-sound-btn" class="fixed bottom-6 left-1/2 z-40 -translate-x-1/2" style="display: none;">
+    <button type="button" class="btn-primary flex items-center gap-2 shadow-lg shadow-amber-500/20">
+      <span>&#128264;</span> Enable Sound
+    </button>
+  </div>
+
+  <!-- Fullscreen Button -->
+  <div class="mx-auto max-w-2xl px-4 pb-8 text-center">
+    <button id="fullscreen-btn" type="button" class="btn-secondary">
+      &#x26F6; Full Screen
+    </button>
+  </div>
+
+  <!-- Alarm Ringing Modal -->
+  <div id="alarm-modal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-slate-950/95 backdrop-blur-sm">
+    <div class="screen-flash fixed inset-0 pointer-events-none"></div>
+    <div class="relative z-10 mx-4 w-full max-w-md text-center">
+      <div class="alarm-ringing mb-4 text-6xl sm:text-8xl">&#128276;</div>
+      <h2 class="alarm-shake mb-2 font-display text-4xl font-bold text-amber-500 sm:text-6xl">WAKE UP!</h2>
+      <p id="modal-alarm-label" class="mb-2 text-lg text-slate-400"></p>
+      <p id="modal-current-time" class="mb-8 font-clock text-2xl text-slate-50"></p>
+      <p id="snooze-warning" class="mb-4 hidden font-display text-lg font-bold text-red-500"></p>
+
+      <div class="flex flex-col items-center gap-3">
+        <button id="stop-alarm-btn" type="button" class="btn-danger w-full max-w-xs px-8 py-4 text-xl">
+          Stop Alarm
+        </button>
+        <button id="snooze-btn" type="button" class="btn-secondary w-full max-w-xs">
+          Just 5 more minutes...
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <AdUnit slot="mid" />
+
+  <!-- SEO Content -->
+  <SEOContent title="How to Use NoMore5Mins Alarm Clock">
+    <p>
+      Setting an alarm on NoMore5Mins takes just a few seconds. Our free online alarm clock is designed to be
+      intuitive and reliable, so you can trust it for early mornings, power naps, or any situation where you need
+      a dependable wake-up call right from your browser.
+    </p>
+
+    <h3 class="mt-4 font-display text-lg font-semibold text-slate-50">Step-by-Step Instructions</h3>
+    <ol class="list-inside list-decimal space-y-2">
+      <li><strong class="text-slate-200">Choose your wake-up time</strong> — Use the hour and minute pickers, then toggle AM or PM. Or tap a quick alarm button for popular times.</li>
+      <li><strong class="text-slate-200">Add a label (optional)</strong> — Give your alarm a name like "Morning Run" or "Meeting at 2 PM" so you know why it is ringing.</li>
+      <li><strong class="text-slate-200">Pick your alarm sound</strong> — Choose from 8 sounds ranging from the gentle Ocean Waves to the unmissable Nuclear Alert. Use "Test Sound" to preview.</li>
+      <li><strong class="text-slate-200">Adjust the volume</strong> — Slide the volume control to your preferred level.</li>
+      <li><strong class="text-slate-200">Click "Set Alarm"</strong> — Your alarm is now active and will ring at the scheduled time. A countdown shows exactly how long until it goes off.</li>
+      <li><strong class="text-slate-200">Keep the tab open</strong> — The alarm requires the browser tab to stay open. Enable browser notifications for an extra safety net.</li>
+    </ol>
+
+    <h3 class="mt-4 font-display text-lg font-semibold text-slate-50">Available Alarm Sounds</h3>
+    <ul class="list-inside list-disc space-y-1">
+      <li><strong class="text-slate-200">Classic Ring</strong> — Traditional alarm bell, loud and clear</li>
+      <li><strong class="text-slate-200">Digital Beep</strong> — Sharp electronic beep pattern</li>
+      <li><strong class="text-slate-200">Gentle Chime</strong> — Soft meditation bell for a calm wake-up</li>
+      <li><strong class="text-slate-200">Morning Birds</strong> — Dawn chorus nature sounds</li>
+      <li><strong class="text-slate-200">Rooster Crow</strong> — The classic countryside wake-up call</li>
+      <li><strong class="text-slate-200">Nuclear Alert</strong> — Emergency siren, impossible to sleep through</li>
+      <li><strong class="text-slate-200">Piano Melody</strong> — Simple piano arpeggio, gentle but effective</li>
+      <li><strong class="text-slate-200">Ocean Waves</strong> — Gentle ocean surf for a peaceful start</li>
+    </ul>
+
+    <h3 class="mt-4 font-display text-lg font-semibold text-slate-50">Tips for Using Online Alarm Clocks</h3>
+    <ul class="list-inside list-disc space-y-1">
+      <li>Keep your laptop plugged in and disable sleep mode so the alarm fires on time</li>
+      <li>Turn your device volume up — browser audio respects system volume settings</li>
+      <li>Allow browser notifications when prompted for a backup alert</li>
+      <li>Use fullscreen mode to turn your screen into a bedside clock</li>
+      <li>Set a backup alarm 5 minutes after your main one for extra peace of mind</li>
+    </ul>
+  </SEOContent>
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} />
+
+  <AdUnit slot="footer" />
+</ToolLayout>
+
+<script>
+  import { AlarmClock } from '../../scripts/alarm.js';
+  import audioManager from '../../scripts/audio.js';
+  import { padZero, formatTime, getTimeUntil, formatTimeUntil } from '../../scripts/utils.js';
+  import { toggleFullscreen } from '../../scripts/fullscreen.js';
+
+  // ---- DOM Elements ----
+  const clockEl = document.getElementById('alarm-clock-display');
+  const ampmEl = document.getElementById('alarm-ampm');
+  const dateEl = document.getElementById('alarm-date');
+  const countdownEl = document.getElementById('alarm-countdown');
+
+  const hourSelect = document.getElementById('alarm-hour') as HTMLSelectElement;
+  const minuteSelect = document.getElementById('alarm-minute') as HTMLSelectElement;
+  const periodToggle = document.getElementById('alarm-period-toggle') as HTMLButtonElement;
+  const labelInput = document.getElementById('alarm-label') as HTMLInputElement;
+  const soundSelect = document.getElementById('alarm-sound') as HTMLSelectElement;
+  const volumeSlider = document.getElementById('alarm-volume') as HTMLInputElement;
+  const volumeDisplay = document.getElementById('volume-display');
+
+  const testSoundBtn = document.getElementById('test-sound-btn');
+  const setAlarmBtn = document.getElementById('set-alarm-btn');
+  const activeAlarmsEl = document.getElementById('active-alarms');
+  const noAlarmsMsg = document.getElementById('no-alarms-msg');
+
+  const alarmModal = document.getElementById('alarm-modal');
+  const modalLabel = document.getElementById('modal-alarm-label');
+  const modalTime = document.getElementById('modal-current-time');
+  const snoozeWarning = document.getElementById('snooze-warning');
+  const stopAlarmBtn = document.getElementById('stop-alarm-btn');
+  const snoozeBtn = document.getElementById('snooze-btn');
+
+  const enableSoundBtn = document.getElementById('enable-sound-btn');
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+  // ---- State ----
+  let isPM = false;
+  let testingSound = false;
+
+  // ---- Alarm Clock Instance ----
+  const alarmClock = new AlarmClock(clockEl, countdownEl);
+
+  // ---- Clock Update (AM/PM + date display) ----
+  function updateClockMeta() {
+    const now = new Date();
+    const h = now.getHours();
+
+    if (ampmEl) {
+      ampmEl.textContent = h >= 12 ? 'PM' : 'AM';
+    }
+
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    }
+  }
+
+  // The AlarmClock class already updates the clock display via its tick.
+  // We hook into onTick to update our extra UI.
+  alarmClock.onTick = () => {
+    updateClockMeta();
+  };
+
+  // ---- Alarm Ring Handler ----
+  alarmClock.onAlarmRing = (alarm: { label: string; hour: number; minute: number }) => {
+    showAlarmModal(alarm);
+  };
+
+  // ---- Start the clock ----
+  alarmClock.start();
+  updateClockMeta();
+
+  // ---- AM/PM Toggle ----
+  if (periodToggle) {
+    periodToggle.addEventListener('click', () => {
+      isPM = !isPM;
+      periodToggle.textContent = isPM ? 'PM' : 'AM';
+    });
+  }
+
+  // ---- Volume Slider ----
+  if (volumeSlider && volumeDisplay) {
+    volumeSlider.addEventListener('input', () => {
+      const vol = parseInt(volumeSlider.value, 10);
+      volumeDisplay.textContent = String(vol);
+      audioManager.setVolume(vol / 100);
+    });
+  }
+
+  // ---- Test Sound ----
+  if (testSoundBtn) {
+    testSoundBtn.addEventListener('click', () => {
+      if (testingSound) {
+        audioManager.stop(0.3);
+        testSoundBtn.textContent = 'Test Sound';
+        testingSound = false;
+      } else {
+        audioManager.init();
+        const soundUrl = soundSelect?.value || '/sounds/classic-ring.wav';
+        audioManager.play(soundUrl, { loop: false, fadeIn: 0 });
+        testSoundBtn.textContent = 'Stop';
+        testingSound = true;
+        setTimeout(() => {
+          if (testingSound) {
+            audioManager.stop(0.3);
+            testSoundBtn.textContent = 'Test Sound';
+            testingSound = false;
+          }
+        }, 5000);
+      }
+    });
+  }
+
+  // ---- Set Alarm ----
+  function getSelectedHour24(): number {
+    let h = parseInt(hourSelect.value, 10);
+    if (isPM && h !== 12) h += 12;
+    if (!isPM && h === 12) h = 0;
+    return h;
+  }
+
+  if (setAlarmBtn) {
+    setAlarmBtn.addEventListener('click', () => {
+      const hour24 = getSelectedHour24();
+      const minute = parseInt(minuteSelect.value, 10);
+      const soundUrl = soundSelect.value;
+      const label = labelInput.value.trim();
+
+      alarmClock.setAlarm(hour24, minute, soundUrl, label);
+      labelInput.value = '';
+      renderAlarms();
+    });
+  }
+
+  // ---- Quick Alarm Buttons ----
+  document.querySelectorAll('.quick-alarm-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const hour = parseInt((btn as HTMLElement).dataset.hour || '7', 10);
+      const minute = parseInt((btn as HTMLElement).dataset.minute || '0', 10);
+      const soundUrl = soundSelect?.value || '/sounds/classic-ring.wav';
+
+      alarmClock.setAlarm(hour, minute, soundUrl, '');
+      renderAlarms();
+    });
+  });
+
+  // ---- Render Active Alarms ----
+  function renderAlarms() {
+    const alarms = alarmClock.getAlarms();
+
+    if (!activeAlarmsEl) return;
+
+    if (alarms.length === 0) {
+      activeAlarmsEl.innerHTML = '<p id="no-alarms-msg" class="text-center text-sm text-slate-500">No alarms set yet</p>';
+      return;
+    }
+
+    activeAlarmsEl.innerHTML = alarms
+      .map((a) => {
+        const displayH = a.hour % 12 || 12;
+        const period = a.hour >= 12 ? 'PM' : 'AM';
+        const timeStr = `${padZero(displayH)}:${padZero(a.minute)} ${period}`;
+        const label = a.label || 'Alarm';
+        // Find sound name from the select options
+        const soundOption = soundSelect?.querySelector(`option[value="${a.soundUrl}"]`) as HTMLOptionElement | null;
+        const soundName = soundOption?.dataset.name || 'Classic Ring';
+
+        return `
+          <div class="card flex items-center justify-between gap-3" data-alarm-id="${a.id}">
+            <div class="flex-1">
+              <span class="font-clock text-lg text-amber-500">${timeStr}</span>
+              <span class="ml-2 text-sm text-slate-400">${label}</span>
+              <span class="ml-2 text-xs text-slate-600">${soundName}</span>
+            </div>
+            <button
+              type="button"
+              class="delete-alarm-btn text-slate-500 transition-colors hover:text-red-500"
+              data-alarm-id="${a.id}"
+              aria-label="Delete alarm"
+            >
+              &#10005;
+            </button>
+          </div>
+        `;
+      })
+      .join('');
+
+    // Attach delete handlers
+    activeAlarmsEl.querySelectorAll('.delete-alarm-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = (btn as HTMLElement).dataset.alarmId;
+        if (id) {
+          alarmClock.removeAlarm(id);
+          renderAlarms();
+        }
+      });
+    });
+  }
+
+  // ---- Alarm Modal ----
+  function showAlarmModal(alarm: { label: string; hour: number; minute: number }) {
+    if (!alarmModal) return;
+
+    alarmModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    if (modalLabel) {
+      modalLabel.textContent = alarm.label || 'Alarm';
+    }
+
+    // Update time in modal
+    function updateModalTime() {
+      if (modalTime) {
+        const now = new Date();
+        modalTime.textContent = formatTime(now.getHours(), now.getMinutes(), now.getSeconds());
+      }
+    }
+    updateModalTime();
+    const modalInterval = setInterval(updateModalTime, 1000);
+
+    // Snooze warning
+    if (snoozeWarning) {
+      if (alarmClock.tooManySnoozes) {
+        snoozeWarning.textContent = 'Seriously? No more 5 minutes!';
+        snoozeWarning.classList.remove('hidden');
+        if (snoozeBtn) snoozeBtn.classList.add('hidden');
+      } else {
+        snoozeWarning.classList.add('hidden');
+        if (snoozeBtn) snoozeBtn.classList.remove('hidden');
+      }
+    }
+
+    function closeModal() {
+      clearInterval(modalInterval);
+      alarmModal!.classList.add('hidden');
+      document.body.style.overflow = '';
+      renderAlarms();
+    }
+
+    // Stop alarm
+    const stopHandler = () => {
+      alarmClock.stopAlarm();
+      closeModal();
+      stopAlarmBtn?.removeEventListener('click', stopHandler);
+      snoozeBtn?.removeEventListener('click', snoozeHandler);
+    };
+
+    // Snooze
+    const snoozeHandler = () => {
+      alarmClock.snooze(5);
+      closeModal();
+      stopAlarmBtn?.removeEventListener('click', stopHandler);
+      snoozeBtn?.removeEventListener('click', snoozeHandler);
+    };
+
+    stopAlarmBtn?.addEventListener('click', stopHandler);
+    snoozeBtn?.addEventListener('click', snoozeHandler);
+  }
+
+  // ---- Enable Sound (mobile audio unlock) ----
+  function checkMobileAudio() {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile && enableSoundBtn) {
+      enableSoundBtn.style.display = '';
+      const innerBtn = enableSoundBtn.querySelector('button');
+      if (innerBtn) {
+        innerBtn.addEventListener('click', () => {
+          audioManager.init();
+          // Play a silent short burst to unlock audio
+          const ctx = (audioManager as any)._context;
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume();
+          }
+          enableSoundBtn.style.display = 'none';
+        }, { once: true });
+      }
+    }
+  }
+  checkMobileAudio();
+
+  // ---- Fullscreen ----
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      toggleFullscreen();
+    });
+  }
+
+  // ---- Initial Render ----
+  renderAlarms();
+
+  // ---- Request notification permission early ----
+  if ('Notification' in window && Notification.permission === 'default') {
+    // We'll request on next user interaction to avoid browser blocking
+    document.addEventListener('click', () => {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }, { once: true });
+  }
+</script>

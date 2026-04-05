@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<BaseLayout
+  title="The 5-Minute Rule for Productivity | NoMore5Mins"
+  description="How committing to just five minutes can help you overcome procrastination, build momentum, and tackle even the most daunting tasks on your list."
+  type="article"
+>
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <article>
+      <header class="mb-10">
+        <a href="/blog/" class="text-sm text-amber-500 hover:text-amber-400 transition-colors">&larr; Back to Blog</a>
+        <h1 class="mt-4 font-display text-4xl font-bold text-slate-50 sm:text-5xl">
+          The 5-Minute Rule for Productivity
+        </h1>
+        <div class="mt-4 flex items-center gap-4 text-sm text-slate-400 dark-muted">
+          <span>By NoMore5Mins Team</span>
+          <span class="text-slate-600">|</span>
+          <time datetime="2026-04">April 2026</time>
+        </div>
+      </header>
+
+      <div class="space-y-8 text-lg leading-relaxed text-slate-400 dark-muted">
+        <p>
+          Procrastination often comes from feeling overwhelmed by the size of a task. The
+          5-Minute Rule flips that on its head: commit to working on something for just five
+          minutes. If you want to stop after five minutes, you can. But most of the time, you
+          will not want to. Starting is the hardest part, and five minutes is all it takes to
+          build momentum. This upcoming guide explores the psychology behind the rule and how
+          to put it into practice.
+        </p>
+
+        <div class="card text-center">
+          <p class="font-display text-xl font-semibold text-amber-500">Coming Soon</p>
+          <p class="mt-2 text-slate-400 dark-muted">
+            This article is currently being written. Check back soon for the full guide.
+          </p>
+          <a
+            href="/timer/"
+            class="mt-4 inline-block text-amber-500 hover:text-amber-400 transition-colors font-medium"
+          >
+            Try the NoMore5Mins Timer &rarr;
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

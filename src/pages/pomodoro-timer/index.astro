@@ -1,0 +1,466 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+
+const faqItems = [
+  {
+    question: 'What is the Pomodoro Technique?',
+    answer: 'The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. It breaks work into focused intervals (traditionally 25 minutes) separated by short breaks. After four work sessions, you take a longer break. The technique is named after the tomato-shaped kitchen timer Cirillo used as a university student.',
+  },
+  {
+    question: 'Why are work sessions 25 minutes long?',
+    answer: '25 minutes is the default because research shows it is long enough to make meaningful progress on a task, but short enough to maintain intense focus without mental fatigue. However, you can customize the duration in the settings to find what works best for you.',
+  },
+  {
+    question: 'What should I do during breaks?',
+    answer: 'During short breaks (5 minutes), step away from your screen. Stretch, get water, or look out a window to rest your eyes. During long breaks (15-30 minutes), go for a short walk, grab a snack, or do something relaxing. Avoid checking social media or email, as these can pull you out of your focused mindset.',
+  },
+  {
+    question: 'Can I change the timer durations?',
+    answer: 'Yes. Click the Settings panel to adjust work duration, short break, long break, and the number of sessions before a long break. Your preferences are saved automatically in your browser so they persist between visits.',
+  },
+  {
+    question: 'Will the timer notify me when a session ends?',
+    answer: 'Yes. An audible sound plays when each work session and break ends. The browser tab title also updates in real time so you can monitor progress even when the tab is in the background.',
+  },
+  {
+    question: 'Does the Pomodoro timer track my sessions?',
+    answer: 'Yes. The timer tracks completed sessions and total focus time for the current day. You can see your progress in the session history section below the controls.',
+  },
+];
+---
+
+<ToolLayout
+  title="Pomodoro Timer - Free Online Pomodoro Technique Timer | NoMore5Mins"
+  description="Free Pomodoro timer for focused productivity. 25-minute work sessions with 5-minute breaks. Track your focus time with NoMore5Mins."
+  toolName="NoMore5Mins Pomodoro Timer"
+  primaryKeyword="pomodoro timer"
+>
+  <div class="mx-auto max-w-4xl px-4 py-6">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Pomodoro Timer', href: '/pomodoro-timer/' },
+    ]} />
+
+    <!-- Phase Indicator Banner -->
+    <div id="phase-banner" class="mb-6 rounded-xl bg-amber-500/20 border border-amber-500/30 py-3 text-center">
+      <span id="phase-label" class="text-lg font-bold tracking-widest text-amber-500 uppercase">Focus</span>
+    </div>
+
+    <!-- Timer Display -->
+    <section class="card mb-6 flex flex-col items-center py-10">
+      <ClockDisplay id="pomodoro-display" size="large" />
+      <p id="session-counter" class="mt-4 text-sm font-medium text-slate-400">
+        Session 1 of 4
+      </p>
+      <p id="total-focus" class="mt-1 text-sm text-slate-500">
+        Total focus: 0 min
+      </p>
+    </section>
+
+    <!-- Control Buttons -->
+    <div class="mb-8 flex flex-wrap items-center justify-center gap-3">
+      <button id="btn-start" class="btn-primary">Start Focus</button>
+      <button id="btn-pause" class="btn-secondary hidden">Pause</button>
+      <button id="btn-skip" class="btn-secondary">Skip</button>
+      <button id="btn-reset" class="btn-secondary">Reset</button>
+    </div>
+
+    <!-- Settings Card (Collapsible) -->
+    <details id="settings-panel" class="card mb-8">
+      <summary class="cursor-pointer px-6 py-4 text-sm font-semibold text-slate-200">
+        Settings
+      </summary>
+      <div class="grid grid-cols-1 gap-4 border-t border-slate-700 px-6 py-4 sm:grid-cols-2">
+        <div>
+          <label for="setting-work" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Work duration (min)</label>
+          <input type="number" id="setting-work" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none" value="25" min="1" max="120" />
+        </div>
+        <div>
+          <label for="setting-short" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Short break (min)</label>
+          <input type="number" id="setting-short" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none" value="5" min="1" max="60" />
+        </div>
+        <div>
+          <label for="setting-long" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Long break (min)</label>
+          <input type="number" id="setting-long" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none" value="15" min="1" max="60" />
+        </div>
+        <div>
+          <label for="setting-sessions" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Sessions before long break</label>
+          <input type="number" id="setting-sessions" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none" value="4" min="2" max="10" />
+        </div>
+        <div class="flex items-center gap-3 sm:col-span-2">
+          <input type="checkbox" id="setting-autostart" class="h-4 w-4 rounded border-slate-700 bg-slate-900 text-amber-500 accent-amber-500" />
+          <label for="setting-autostart" class="text-sm text-slate-400">Auto-start next session</label>
+        </div>
+        <div>
+          <label for="setting-work-sound" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Work end sound</label>
+          <select id="setting-work-sound" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none">
+            <option value="/sounds/digital-beep.wav">Digital Beep</option>
+            <option value="/sounds/bell.wav">Bell</option>
+            <option value="/sounds/chime.wav">Chime</option>
+          </select>
+        </div>
+        <div>
+          <label for="setting-break-sound" class="mb-1 block text-xs font-medium text-slate-400 uppercase">Break end sound</label>
+          <select id="setting-break-sound" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-amber-500 focus:border-amber-500 focus:outline-none">
+            <option value="/sounds/digital-beep.wav">Digital Beep</option>
+            <option value="/sounds/bell.wav">Bell</option>
+            <option value="/sounds/chime.wav">Chime</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <!-- Session History -->
+    <section class="card mb-8 px-6 py-4">
+      <h3 class="mb-3 text-sm font-semibold text-slate-200">Today's Sessions</h3>
+      <div id="session-history" class="flex flex-wrap gap-2">
+        <!-- Filled dynamically -->
+      </div>
+      <p id="session-summary" class="mt-3 text-sm text-slate-500">0 sessions completed today</p>
+    </section>
+
+    <AdUnit slot="mid" />
+
+    <SEOContent title="The Pomodoro Technique">
+      <p>
+        The Pomodoro Technique is one of the most popular and effective time management methods in the world.
+        Developed by Francesco Cirillo in the late 1980s, it uses a simple concept: break your work into
+        focused intervals (called "pomodoros") separated by short rest periods. The standard rhythm is
+        25 minutes of focused work followed by a 5-minute break.
+      </p>
+      <h3 class="font-semibold text-slate-200">How It Works</h3>
+      <p>
+        Choose a task you want to work on. Start the Pomodoro timer and commit to working on that single task
+        for the full 25 minutes. When the timer rings, take a short 5-minute break. After four consecutive
+        pomodoros, reward yourself with a longer break of 15 to 30 minutes. This cycle helps maintain high
+        levels of concentration while preventing burnout.
+      </p>
+      <h3 class="font-semibold text-slate-200">Why It Works</h3>
+      <p>
+        The technique leverages several psychological principles. The time constraint creates urgency, which
+        fights procrastination. The regular breaks prevent mental fatigue and maintain creativity. Tracking
+        completed sessions gives you a sense of progress and accomplishment. Over time, you develop a better
+        understanding of how long tasks actually take.
+      </p>
+      <h3 class="font-semibold text-slate-200">Tips for Success</h3>
+      <p>
+        During a pomodoro, resist the urge to check email, social media, or messages. If a distracting thought
+        arises, jot it down on paper and return to it during your break. Start with the standard 25/5 timing
+        and adjust once you understand your personal rhythm. Some people find 50-minute work sessions with
+        10-minute breaks more effective for deep creative work, while others prefer shorter 15-minute bursts
+        for administrative tasks.
+      </p>
+    </SEOContent>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer" />
+  </div>
+</ToolLayout>
+
+<script>
+  // DOM elements
+  const display = document.getElementById('pomodoro-display') as HTMLElement;
+  const phaseLabel = document.getElementById('phase-label') as HTMLElement;
+  const phaseBanner = document.getElementById('phase-banner') as HTMLElement;
+  const sessionCounter = document.getElementById('session-counter') as HTMLElement;
+  const totalFocusEl = document.getElementById('total-focus') as HTMLElement;
+  const sessionHistory = document.getElementById('session-history') as HTMLElement;
+  const sessionSummary = document.getElementById('session-summary') as HTMLElement;
+
+  const btnStart = document.getElementById('btn-start') as HTMLButtonElement;
+  const btnPause = document.getElementById('btn-pause') as HTMLButtonElement;
+  const btnSkip = document.getElementById('btn-skip') as HTMLButtonElement;
+  const btnReset = document.getElementById('btn-reset') as HTMLButtonElement;
+
+  const settingWork = document.getElementById('setting-work') as HTMLInputElement;
+  const settingShort = document.getElementById('setting-short') as HTMLInputElement;
+  const settingLong = document.getElementById('setting-long') as HTMLInputElement;
+  const settingSessions = document.getElementById('setting-sessions') as HTMLInputElement;
+  const settingAutostart = document.getElementById('setting-autostart') as HTMLInputElement;
+  const settingWorkSound = document.getElementById('setting-work-sound') as HTMLSelectElement;
+  const settingBreakSound = document.getElementById('setting-break-sound') as HTMLSelectElement;
+
+  // State
+  type Phase = 'work' | 'short-break' | 'long-break';
+
+  let phase: Phase = 'work';
+  let currentSession = 1;
+  let sessionsBeforeLong = 4;
+  let workDuration = 25 * 60; // seconds
+  let shortBreakDuration = 5 * 60;
+  let longBreakDuration = 15 * 60;
+  let remaining = workDuration;
+  let running = false;
+  let intervalId: number | null = null;
+  let endTime = 0;
+  let totalFocusSeconds = 0;
+  let completedSessions = 0;
+  let autoStart = false;
+
+  const originalTitle = document.title;
+
+  // Load settings from localStorage
+  function loadSettings() {
+    try {
+      const saved = localStorage.getItem('nomore5mins-pomodoro');
+      if (saved) {
+        const s = JSON.parse(saved);
+        workDuration = (s.work || 25) * 60;
+        shortBreakDuration = (s.shortBreak || 5) * 60;
+        longBreakDuration = (s.longBreak || 15) * 60;
+        sessionsBeforeLong = s.sessions || 4;
+        autoStart = s.autoStart || false;
+        settingWork.value = String(s.work || 25);
+        settingShort.value = String(s.shortBreak || 5);
+        settingLong.value = String(s.longBreak || 15);
+        settingSessions.value = String(s.sessions || 4);
+        settingAutostart.checked = autoStart;
+        if (s.workSound) settingWorkSound.value = s.workSound;
+        if (s.breakSound) settingBreakSound.value = s.breakSound;
+      }
+      // Load today's stats
+      const today = new Date().toDateString();
+      const stats = localStorage.getItem('nomore5mins-pomodoro-stats');
+      if (stats) {
+        const st = JSON.parse(stats);
+        if (st.date === today) {
+          completedSessions = st.completed || 0;
+          totalFocusSeconds = st.focusSeconds || 0;
+        }
+      }
+    } catch (_) {}
+    remaining = workDuration;
+    updateDisplay();
+    updateSessionUI();
+  }
+
+  function saveSettings() {
+    try {
+      localStorage.setItem('nomore5mins-pomodoro', JSON.stringify({
+        work: parseInt(settingWork.value) || 25,
+        shortBreak: parseInt(settingShort.value) || 5,
+        longBreak: parseInt(settingLong.value) || 15,
+        sessions: parseInt(settingSessions.value) || 4,
+        autoStart: settingAutostart.checked,
+        workSound: settingWorkSound.value,
+        breakSound: settingBreakSound.value,
+      }));
+    } catch (_) {}
+  }
+
+  function saveStats() {
+    try {
+      localStorage.setItem('nomore5mins-pomodoro-stats', JSON.stringify({
+        date: new Date().toDateString(),
+        completed: completedSessions,
+        focusSeconds: totalFocusSeconds,
+      }));
+    } catch (_) {}
+  }
+
+  // Format mm:ss
+  function formatTime(sec: number): string {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    display.textContent = formatTime(remaining);
+  }
+
+  function updatePhaseUI() {
+    if (phase === 'work') {
+      phaseLabel.textContent = 'Focus';
+      phaseBanner.className = 'mb-6 rounded-xl bg-amber-500/20 border border-amber-500/30 py-3 text-center';
+      phaseLabel.className = 'text-lg font-bold tracking-widest text-amber-500 uppercase';
+    } else if (phase === 'short-break') {
+      phaseLabel.textContent = 'Break';
+      phaseBanner.className = 'mb-6 rounded-xl bg-green-500/20 border border-green-500/30 py-3 text-center';
+      phaseLabel.className = 'text-lg font-bold tracking-widest text-green-500 uppercase';
+    } else {
+      phaseLabel.textContent = 'Long Break';
+      phaseBanner.className = 'mb-6 rounded-xl bg-blue-500/20 border border-blue-500/30 py-3 text-center';
+      phaseLabel.className = 'text-lg font-bold tracking-widest text-blue-500 uppercase';
+    }
+  }
+
+  function updateSessionUI() {
+    sessionCounter.textContent = `Session ${currentSession} of ${sessionsBeforeLong}`;
+    totalFocusEl.textContent = `Total focus: ${Math.floor(totalFocusSeconds / 60)} min`;
+
+    // Session history circles
+    sessionHistory.innerHTML = '';
+    for (let i = 0; i < completedSessions; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 text-sm font-bold';
+      dot.textContent = String(i + 1);
+      sessionHistory.appendChild(dot);
+    }
+    sessionSummary.textContent = `${completedSessions} session${completedSessions !== 1 ? 's' : ''} completed today`;
+  }
+
+  function updateTitle() {
+    if (running) {
+      const phaseText = phase === 'work' ? 'Focus' : phase === 'short-break' ? 'Break' : 'Long Break';
+      document.title = `${formatTime(remaining)} - ${phaseText} | NoMore5Mins`;
+    } else {
+      document.title = originalTitle;
+    }
+  }
+
+  function playSound(src: string) {
+    try {
+      const audio = new Audio(src);
+      audio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function tick() {
+    remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    updateDisplay();
+    updateTitle();
+
+    if (remaining <= 0) {
+      phaseComplete();
+    }
+  }
+
+  function phaseComplete() {
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    running = false;
+
+    if (phase === 'work') {
+      // Work session complete
+      totalFocusSeconds += workDuration;
+      completedSessions++;
+      currentSession++;
+      saveStats();
+
+      playSound(settingWorkSound.value);
+
+      // Determine next phase
+      if ((currentSession - 1) % sessionsBeforeLong === 0) {
+        phase = 'long-break';
+        remaining = longBreakDuration;
+      } else {
+        phase = 'short-break';
+        remaining = shortBreakDuration;
+      }
+    } else {
+      // Break complete
+      playSound(settingBreakSound.value);
+      phase = 'work';
+      remaining = workDuration;
+    }
+
+    updatePhaseUI();
+    updateDisplay();
+    updateSessionUI();
+
+    btnStart.textContent = phase === 'work' ? 'Start Focus' : 'Start Break';
+    btnStart.classList.remove('hidden');
+    btnPause.classList.add('hidden');
+
+    // Show brand message during break
+    if (phase !== 'work') {
+      document.title = 'No more 5 minutes of distraction! | NoMore5Mins';
+    }
+
+    if (autoStart) {
+      startTimer();
+    }
+  }
+
+  function startTimer() {
+    if (remaining <= 0) {
+      remaining = phase === 'work' ? workDuration : phase === 'short-break' ? shortBreakDuration : longBreakDuration;
+    }
+    endTime = Date.now() + remaining * 1000;
+    running = true;
+    intervalId = window.setInterval(tick, 200);
+
+    btnStart.classList.add('hidden');
+    btnPause.classList.remove('hidden');
+    updateTitle();
+  }
+
+  function pauseTimer() {
+    if (!running) return;
+    running = false;
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+
+    btnPause.classList.add('hidden');
+    btnStart.classList.remove('hidden');
+    btnStart.textContent = 'Resume';
+    document.title = originalTitle;
+  }
+
+  function skipPhase() {
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    running = false;
+    remaining = 0;
+    phaseComplete();
+  }
+
+  function resetAll() {
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    running = false;
+    phase = 'work';
+    currentSession = 1;
+    remaining = workDuration;
+
+    updatePhaseUI();
+    updateDisplay();
+    updateSessionUI();
+
+    btnStart.textContent = 'Start Focus';
+    btnStart.classList.remove('hidden');
+    btnPause.classList.add('hidden');
+    document.title = originalTitle;
+  }
+
+  // Event listeners
+  btnStart.addEventListener('click', startTimer);
+  btnPause.addEventListener('click', pauseTimer);
+  btnSkip.addEventListener('click', skipPhase);
+  btnReset.addEventListener('click', resetAll);
+
+  // Settings change handlers
+  const settingInputs = [settingWork, settingShort, settingLong, settingSessions, settingAutostart, settingWorkSound, settingBreakSound];
+  settingInputs.forEach((input) => {
+    input.addEventListener('change', () => {
+      workDuration = (parseInt(settingWork.value) || 25) * 60;
+      shortBreakDuration = (parseInt(settingShort.value) || 5) * 60;
+      longBreakDuration = (parseInt(settingLong.value) || 15) * 60;
+      sessionsBeforeLong = parseInt(settingSessions.value) || 4;
+      autoStart = settingAutostart.checked;
+      saveSettings();
+
+      // If not running, update the display to reflect new duration
+      if (!running) {
+        if (phase === 'work') remaining = workDuration;
+        else if (phase === 'short-break') remaining = shortBreakDuration;
+        else remaining = longBreakDuration;
+        updateDisplay();
+        updateSessionUI();
+      }
+    });
+  });
+
+  // Init
+  loadSettings();
+  updatePhaseUI();
+  updateDisplay();
+</script>

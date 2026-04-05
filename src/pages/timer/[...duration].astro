@@ -1,0 +1,312 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+import presets from '../../content/timers/presets.json';
+
+export function getStaticPaths() {
+  return presets.map((preset) => ({
+    params: { duration: preset.slug },
+    props: { preset },
+  }));
+}
+
+const { preset } = Astro.props;
+
+const canonicalUrl = `https://nomore5mins.netlify.app/timer/${preset.slug}/`;
+
+function formatDuration(totalSeconds: number): string {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+const initialDisplay = formatDuration(preset.seconds);
+
+const faqItems = [
+  {
+    question: `How long is a ${preset.display.toLowerCase()} timer?`,
+    answer: `A ${preset.display.toLowerCase()} timer counts down for exactly ${preset.seconds} seconds (${preset.display.toLowerCase()}). Once started, the timer will count down to zero and play an alert sound to let you know time is up.`,
+  },
+  {
+    question: 'Will the timer keep running if I switch tabs?',
+    answer: 'Yes! The timer continues running in the background even if you switch to another tab. Just keep the browser window open and you\'ll hear the alert when time is up.',
+  },
+  {
+    question: 'Can I pause and resume the timer?',
+    answer: 'Yes, click the Pause button at any time to pause the countdown. Click Resume to continue from where you left off. You can also Reset to start the full duration again.',
+  },
+  {
+    question: 'Is this timer free to use?',
+    answer: 'Absolutely! The NoMore5Mins timer is completely free. No downloads, no sign-ups, no hidden fees. Just open the page and start timing.',
+  },
+  {
+    question: 'Does the timer work on mobile devices?',
+    answer: 'Yes, this timer works on any device with a modern web browser — smartphones, tablets, laptops, and desktops. Just keep the browser tab open for the alert sound to play.',
+  },
+];
+
+const otherTimers = presets
+  .filter((p) => p.slug !== preset.slug)
+  .slice(0, 8);
+---
+
+<ToolLayout
+  title={preset.title}
+  description={preset.description}
+  canonicalUrl={canonicalUrl}
+  toolName={`NoMore5Mins ${preset.display} Timer`}
+  primaryKeyword={`${preset.display.toLowerCase()} timer`}
+>
+  <div class="mx-auto max-w-4xl px-4 py-6">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Timer', href: '/timer/' },
+        { label: `${preset.display} Timer`, href: canonicalUrl },
+      ]}
+    />
+
+    <!-- Hidden preset data for JS -->
+    <div id="preset-timer-data" data-seconds={preset.seconds} class="hidden"></div>
+
+    <!-- Main timer section -->
+    <section class="card mb-8 flex flex-col items-center py-10">
+      <h1 class="mb-4 font-display text-3xl font-bold text-slate-50 md:text-4xl">
+        {preset.h1}
+      </h1>
+      <p class="mb-6 text-center text-slate-400">
+        Start your {preset.display.toLowerCase()} countdown instantly. Free, no downloads.
+      </p>
+
+      <!-- Timer display -->
+      <div class="relative mb-6">
+        <!-- SVG progress ring -->
+        <svg class="mx-auto" width="280" height="280" viewBox="0 0 280 280">
+          <circle
+            cx="140"
+            cy="140"
+            r="126"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="6"
+            class="text-slate-800"
+          />
+          <circle
+            id="progress-circle"
+            cx="140"
+            cy="140"
+            r="126"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="6"
+            stroke-linecap="round"
+            stroke-dasharray="792"
+            stroke-dashoffset="0"
+            class="progress-ring-circle text-amber-500"
+          />
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <ClockDisplay id="preset-timer-display" size="medium" />
+        </div>
+      </div>
+
+      <!-- Status -->
+      <p id="timer-status" class="mb-4 text-sm font-medium uppercase tracking-wider text-slate-400">
+        Ready
+      </p>
+
+      <!-- Control buttons -->
+      <div class="flex flex-wrap justify-center gap-3">
+        <button id="btn-start" class="btn-primary text-lg">Start</button>
+        <button id="btn-pause" class="btn-secondary hidden text-lg">Pause</button>
+        <button id="btn-resume" class="btn-primary hidden text-lg">Resume</button>
+        <button id="btn-reset" class="btn-secondary hidden text-lg">Reset</button>
+      </div>
+    </section>
+
+    <!-- Timer complete modal -->
+    <div id="timer-complete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70">
+      <div class="card mx-4 max-w-sm text-center">
+        <div class="mb-4 text-6xl">&#128276;</div>
+        <h2 class="mb-2 font-display text-3xl font-bold text-amber-500">Time's Up!</h2>
+        <p class="mb-6 text-slate-400">Your {preset.display.toLowerCase()} timer has finished.</p>
+        <button id="btn-dismiss" class="btn-primary">Dismiss</button>
+      </div>
+    </div>
+
+    <AdUnit slot="mid-timer" format="horizontal" />
+
+    <SEOContent title={`About the ${preset.display} Timer`}>
+      <p>{preset.content}</p>
+      <h3 class="mt-4 font-semibold text-slate-200">Common Uses</h3>
+      <ul class="list-inside list-disc space-y-1">
+        {preset.useCases.map((uc: string) => <li>{uc}</li>)}
+      </ul>
+    </SEOContent>
+
+    <!-- Related timers -->
+    <section class="mb-8">
+      <h2 class="mb-4 font-display text-2xl font-bold">Other Timers</h2>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {otherTimers.map((t) => (
+          <a
+            href={`/timer/${t.slug}/`}
+            class="card text-center transition-colors hover:border-amber-500"
+          >
+            <span class="block font-clock text-lg text-amber-500">{t.display}</span>
+            <span class="text-xs text-slate-400">Timer</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer-timer" format="horizontal" />
+  </div>
+</ToolLayout>
+
+<script>
+  const dataEl = document.getElementById('preset-timer-data')!;
+  const totalDuration = parseInt(dataEl.dataset.seconds!);
+
+  const displayEl = document.getElementById('preset-timer-display')!;
+  const statusEl = document.getElementById('timer-status')!;
+  const progressCircle = document.getElementById('progress-circle') as SVGCircleElement;
+  const btnStart = document.getElementById('btn-start') as HTMLButtonElement;
+  const btnPause = document.getElementById('btn-pause') as HTMLButtonElement;
+  const btnResume = document.getElementById('btn-resume') as HTMLButtonElement;
+  const btnReset = document.getElementById('btn-reset') as HTMLButtonElement;
+  const btnDismiss = document.getElementById('btn-dismiss') as HTMLButtonElement;
+  const modal = document.getElementById('timer-complete-modal')!;
+
+  const CIRCUMFERENCE = 2 * Math.PI * 126;
+  let remaining = totalDuration;
+  let interval: number | null = null;
+  let endTime: number = 0;
+  let audio: HTMLAudioElement | null = null;
+  const originalTitle = document.title;
+
+  function padZero(n: number): string {
+    return String(n).padStart(2, '0');
+  }
+
+  function formatCountdown(secs: number): string {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    return `${padZero(h)}:${padZero(m)}:${padZero(s)}`;
+  }
+
+  function updateDisplay() {
+    displayEl.textContent = formatCountdown(remaining);
+    const progress = 1 - remaining / totalDuration;
+    progressCircle.style.strokeDashoffset = String(progress * CIRCUMFERENCE);
+
+    if (remaining > 0) {
+      document.title = `\u23F1 ${formatCountdown(remaining)} - Timer | NoMore5Mins`;
+    }
+  }
+
+  function tick() {
+    const now = Date.now();
+    remaining = Math.max(0, Math.round((endTime - now) / 1000));
+    updateDisplay();
+
+    if (remaining <= 0) {
+      complete();
+    }
+  }
+
+  function start() {
+    endTime = Date.now() + remaining * 1000;
+    interval = window.setInterval(tick, 100);
+    statusEl.textContent = 'Running';
+    btnStart.classList.add('hidden');
+    btnPause.classList.remove('hidden');
+    btnReset.classList.remove('hidden');
+    btnResume.classList.add('hidden');
+  }
+
+  function pause() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+    statusEl.textContent = 'Paused';
+    btnPause.classList.add('hidden');
+    btnResume.classList.remove('hidden');
+  }
+
+  function resume() {
+    endTime = Date.now() + remaining * 1000;
+    interval = window.setInterval(tick, 100);
+    statusEl.textContent = 'Running';
+    btnResume.classList.add('hidden');
+    btnPause.classList.remove('hidden');
+  }
+
+  function reset() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+    remaining = totalDuration;
+    updateDisplay();
+    statusEl.textContent = 'Ready';
+    btnStart.classList.remove('hidden');
+    btnPause.classList.add('hidden');
+    btnResume.classList.add('hidden');
+    btnReset.classList.add('hidden');
+    document.title = originalTitle;
+  }
+
+  function complete() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+    remaining = 0;
+    updateDisplay();
+    statusEl.textContent = 'Done!';
+    document.title = '\uD83D\uDD14 Timer Done! | NoMore5Mins';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    playSound();
+  }
+
+  function playSound() {
+    try {
+      audio = new Audio('/sounds/digital-beep.wav');
+      audio.loop = true;
+      audio.volume = 0.8;
+      audio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function dismiss() {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio = null;
+    }
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    reset();
+  }
+
+  // Event listeners
+  btnStart.addEventListener('click', start);
+  btnPause.addEventListener('click', pause);
+  btnResume.addEventListener('click', resume);
+  btnReset.addEventListener('click', reset);
+  btnDismiss.addEventListener('click', dismiss);
+
+  // Initialize display
+  updateDisplay();
+</script>

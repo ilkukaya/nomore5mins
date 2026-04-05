@@ -1,0 +1,392 @@
+[
+  {
+    "slug": "1-minute-timer",
+    "seconds": 60,
+    "display": "1 Minute",
+    "title": "1 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 1 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "1 Minute Timer",
+    "content": "Need a quick 1 minute countdown? Perfect for timing short exercises, quick breaks, or game turns. This free online 1 minute timer starts instantly with one click. When time's up, NoMore5Mins will alert you with a sound \u2014 no more guessing, no more watching the clock!",
+    "useCases": [
+      "Quick exercise intervals",
+      "Game turn timing",
+      "Brushing teeth sections",
+      "Short meditation breaks"
+    ]
+  },
+  {
+    "slug": "2-minute-timer",
+    "seconds": 120,
+    "display": "2 Minute",
+    "title": "2 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 2 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "2 Minute Timer",
+    "content": "A 2 minute timer is ideal for quick tasks like brushing your teeth or timing a short exercise. Start this free online countdown instantly and NoMore5Mins will let you know the moment those 2 minutes are up. Simple, reliable, and completely free.",
+    "useCases": [
+      "Teeth brushing timer",
+      "Quick stretching",
+      "Speed chess moves",
+      "Microwave cooking"
+    ]
+  },
+  {
+    "slug": "3-minute-timer",
+    "seconds": 180,
+    "display": "3 Minute",
+    "title": "3 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 3 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "3 Minute Timer",
+    "content": "Three minutes is the perfect duration for boiling eggs, steeping tea, or taking a quick mental break. This free 3 minute timer counts down with precision and alerts you with a clear sound when time is up. No apps to install \u2014 just click and go.",
+    "useCases": [
+      "Egg boiling timer",
+      "Quick phone calls",
+      "Speed reading sessions",
+      "Cup of tea steeping"
+    ]
+  },
+  {
+    "slug": "5-minute-timer",
+    "seconds": 300,
+    "display": "5 Minute",
+    "title": "5 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 5 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "5 Minute Timer",
+    "content": "The classic 5 minute timer \u2014 perfect for short breaks, quick cleanups, or timed challenges. At NoMore5Mins, we know a lot can happen in 5 minutes. Start your countdown now and make every one of those 300 seconds count!",
+    "useCases": [
+      "Short break timer",
+      "Quick cleanup sprints",
+      "Presentation practice",
+      "Plank exercises"
+    ]
+  },
+  {
+    "slug": "7-minute-timer",
+    "seconds": 420,
+    "display": "7 Minute",
+    "title": "7 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 7 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "7 Minute Timer",
+    "content": "The 7 minute workout has taken the fitness world by storm, and this timer is built for it. Start your 7 minute countdown and focus entirely on your exercise while NoMore5Mins handles the timing. A sound will alert you when your session is complete.",
+    "useCases": [
+      "7-minute workout",
+      "Quick shower timer",
+      "Coffee brewing",
+      "Short journaling session"
+    ]
+  },
+  {
+    "slug": "10-minute-timer",
+    "seconds": 600,
+    "display": "10 Minute",
+    "title": "10 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 10 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "10 Minute Timer",
+    "content": "Ten minutes is the sweet spot for power naps, quick meditation sessions, and focused work sprints. This free 10 minute online timer starts with a single click and alerts you when your time is up. Stay focused, stay productive.",
+    "useCases": [
+      "Power nap timer",
+      "Quick meditation",
+      "Room tidying",
+      "Morning stretching routine"
+    ]
+  },
+  {
+    "slug": "12-minute-timer",
+    "seconds": 720,
+    "display": "12 Minute",
+    "title": "12 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 12 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "12 Minute Timer",
+    "content": "A 12 minute timer is great for HIIT workouts, quick meal prep, or focused bursts of productivity. NoMore5Mins counts down every second so you can concentrate on what matters. A clear alarm sound plays when your 12 minutes are complete.",
+    "useCases": [
+      "HIIT workout intervals",
+      "Quick meal prep",
+      "Focus sprints",
+      "Speed cleaning"
+    ]
+  },
+  {
+    "slug": "15-minute-timer",
+    "seconds": 900,
+    "display": "15 Minute",
+    "title": "15 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 15 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "15 Minute Timer",
+    "content": "Fifteen minutes is the standard Pomodoro break duration and a popular interval for many activities. This free 15 minute timer is perfect for short breaks, household chores, or quick reading sessions. Let NoMore5Mins track the time while you focus.",
+    "useCases": [
+      "Pomodoro short break",
+      "Quick household chore",
+      "Reading session",
+      "Yoga flow"
+    ]
+  },
+  {
+    "slug": "20-minute-timer",
+    "seconds": 1200,
+    "display": "20 Minute",
+    "title": "20 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 20 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "20 Minute Timer",
+    "content": "Twenty minutes is scientifically proven to be the ideal power nap duration. Use this free 20 minute timer for naps, quick workouts, or focused writing sprints. NoMore5Mins alerts you with a sound so you can rest easy knowing you won't oversleep.",
+    "useCases": [
+      "Power nap",
+      "Focused writing sprint",
+      "Quick workout",
+      "Laundry cycle check"
+    ]
+  },
+  {
+    "slug": "25-minute-timer",
+    "seconds": 1500,
+    "display": "25 Minute",
+    "title": "25 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 25 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "25 Minute Timer",
+    "content": "The 25 minute timer is the gold standard for Pomodoro Technique work sessions. Focus deeply for 25 minutes, then take a break. This free online timer makes it easy to practice time-boxed productivity without any apps or downloads.",
+    "useCases": [
+      "Pomodoro work session",
+      "Focused study block",
+      "Deep work sprint",
+      "Practice instrument"
+    ]
+  },
+  {
+    "slug": "30-minute-timer",
+    "seconds": 1800,
+    "display": "30 Minute",
+    "title": "30 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 30 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "30 Minute Timer",
+    "content": "Half an hour is perfect for gym sessions, lunch breaks, and focused work blocks. This free 30 minute countdown timer runs in your browser and alerts you when time is up. Set it and forget it \u2014 NoMore5Mins has your back.",
+    "useCases": [
+      "Lunch break timer",
+      "Gym workout",
+      "Online meeting",
+      "TV episode timer"
+    ]
+  },
+  {
+    "slug": "35-minute-timer",
+    "seconds": 2100,
+    "display": "35 Minute",
+    "title": "35 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 35 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "35 Minute Timer",
+    "content": "A 35 minute timer gives you that extra focus time beyond a standard half-hour block. Ideal for extended study sessions, baking, or practice routines. NoMore5Mins counts down precisely and alerts you with a clear sound when done.",
+    "useCases": [
+      "Extended study session",
+      "Baking timer",
+      "Commute alarm",
+      "Practice session"
+    ]
+  },
+  {
+    "slug": "40-minute-timer",
+    "seconds": 2400,
+    "display": "40 Minute",
+    "title": "40 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 40 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "40 Minute Timer",
+    "content": "Forty minutes matches a standard class period and is great for extended workout sessions or deep focus blocks. This free 40 minute online timer keeps you on track without any distractions. Just start and focus.",
+    "useCases": [
+      "Class period timer",
+      "Extended workout",
+      "Deep focus block",
+      "Cooking timer"
+    ]
+  },
+  {
+    "slug": "45-minute-timer",
+    "seconds": 2700,
+    "display": "45 Minute",
+    "title": "45 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 45 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "45 Minute Timer",
+    "content": "A 45 minute timer is perfect for lecture-length sessions, long workouts, or exam practice. This free online countdown gives you a reliable way to time any 45-minute activity. NoMore5Mins alerts you the instant time runs out.",
+    "useCases": [
+      "Lecture timer",
+      "Long workout",
+      "Exam practice",
+      "Therapy session"
+    ]
+  },
+  {
+    "slug": "50-minute-timer",
+    "seconds": 3000,
+    "display": "50 Minute",
+    "title": "50 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 50 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "50 Minute Timer",
+    "content": "Fifty minutes mirrors a standard college class period. Use this timer for extended focus sessions, podcast-length activities, or practice time. NoMore5Mins provides a distraction-free countdown that keeps you on schedule.",
+    "useCases": [
+      "Class period",
+      "Extended focus session",
+      "Podcast length timer",
+      "Long commute"
+    ]
+  },
+  {
+    "slug": "1-hour-timer",
+    "seconds": 3600,
+    "display": "1 Hour",
+    "title": "1 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 1 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "1 Hour Timer",
+    "content": "Need a full hour countdown? Whether it's for a meeting, study session, or parking meter, this free 1 hour timer has you covered. NoMore5Mins counts down 60 minutes precisely and alerts you with a clear sound when time expires.",
+    "useCases": [
+      "Meeting timer",
+      "Study session",
+      "Exam practice",
+      "Parking meter reminder"
+    ]
+  },
+  {
+    "slug": "90-minute-timer",
+    "seconds": 5400,
+    "display": "90 Minute",
+    "title": "90 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 90 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "90 Minute Timer",
+    "content": "Ninety minutes matches one complete sleep cycle and is ideal for deep work sessions. This 90 minute timer (1.5 hours) is perfect for extended focus blocks, movie-length activities, or strategic power naps. Let NoMore5Mins handle the countdown.",
+    "useCases": [
+      "Movie length timer",
+      "Deep work block",
+      "Sleep cycle timer",
+      "Extended study session"
+    ]
+  },
+  {
+    "slug": "2-hour-timer",
+    "seconds": 7200,
+    "display": "2 Hour",
+    "title": "2 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 2 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "2 Hour Timer",
+    "content": "A 2 hour timer is perfect for movies, long study sessions, or slow-cooking recipes. This free online countdown runs reliably in your browser for the full 120 minutes. NoMore5Mins alerts you when your two hours are up.",
+    "useCases": [
+      "Long study session",
+      "Movie timer",
+      "Cooking roast",
+      "Extended meeting"
+    ]
+  },
+  {
+    "slug": "150-minute-timer",
+    "seconds": 9000,
+    "display": "150 Minute",
+    "title": "150 Minute Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 150 minute timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "150 Minute Timer",
+    "content": "Two and a half hours (150 minutes) is ideal for long movies, extended study marathons, or workshop sessions. This free timer counts down every second and plays an alert when your 150 minutes are complete.",
+    "useCases": [
+      "Long movie timer",
+      "Extended study marathon",
+      "Travel arrival reminder",
+      "Workshop session"
+    ]
+  },
+  {
+    "slug": "3-hour-timer",
+    "seconds": 10800,
+    "display": "3 Hour",
+    "title": "3 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 3 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "3 Hour Timer",
+    "content": "Three hours matches most exam durations and long cooking times. This free 3 hour online timer runs in the background while you focus on what matters. NoMore5Mins will alert you when your three hours are up.",
+    "useCases": [
+      "Exam duration timer",
+      "Long cooking timer",
+      "Flight arrival reminder",
+      "Gaming session limit"
+    ]
+  },
+  {
+    "slug": "4-hour-timer",
+    "seconds": 14400,
+    "display": "4 Hour",
+    "title": "4 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 4 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "4 Hour Timer",
+    "content": "A 4 hour timer is great for half-day study blocks, slow cooker checks, or work half-shifts. This free online countdown runs reliably for the full 240 minutes. Set it and focus \u2014 NoMore5Mins handles the rest.",
+    "useCases": [
+      "Half-day study block",
+      "Slow cooker check",
+      "Road trip milestone",
+      "Work half-shift"
+    ]
+  },
+  {
+    "slug": "5-hour-timer",
+    "seconds": 18000,
+    "display": "5 Hour",
+    "title": "5 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 5 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "5 Hour Timer",
+    "content": "Five hours is a serious time commitment, and NoMore5Mins is here to track every minute. Use this free 5 hour timer for extended study marathons, sleep timers, or long events. A clear alert sounds when time is up.",
+    "useCases": [
+      "Sleep timer",
+      "Long road trip segment",
+      "Event countdown",
+      "Extended project block"
+    ]
+  },
+  {
+    "slug": "6-hour-timer",
+    "seconds": 21600,
+    "display": "6 Hour",
+    "title": "6 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 6 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "6 Hour Timer",
+    "content": "A 6 hour timer is perfect for overnight cooking, sleep cycles, or long event preparation. This free online countdown tracks all 360 minutes and alerts you when your time is complete. Reliable timing from NoMore5Mins.",
+    "useCases": [
+      "Overnight cooking",
+      "Sleep cycle timer",
+      "Event preparation",
+      "Long haul flight segment"
+    ]
+  },
+  {
+    "slug": "8-hour-timer",
+    "seconds": 28800,
+    "display": "8 Hour",
+    "title": "8 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 8 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "8 Hour Timer",
+    "content": "Eight hours equals a full work shift or a complete night of sleep. This free 8 hour timer is ideal for sleep timers, overnight cooking, or tracking a full work period. NoMore5Mins runs the countdown so you don't have to.",
+    "useCases": [
+      "Full work shift",
+      "Sleep timer",
+      "Overnight slow cook",
+      "Full rest timer"
+    ]
+  },
+  {
+    "slug": "10-hour-timer",
+    "seconds": 36000,
+    "display": "10 Hour",
+    "title": "10 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 10 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "10 Hour Timer",
+    "content": "A 10 hour timer is built for long overnight countdowns, extended events, or marathon sessions. This free online timer from NoMore5Mins tracks every one of those 36,000 seconds and alerts you when your time is finally up.",
+    "useCases": [
+      "Extended sleep",
+      "Long haul timer",
+      "Overnight event",
+      "Contest duration"
+    ]
+  },
+  {
+    "slug": "12-hour-timer",
+    "seconds": 43200,
+    "display": "12 Hour",
+    "title": "12 Hour Timer - Online Countdown Timer | NoMore5Mins",
+    "description": "Free 12 hour timer with alarm sound. Start instantly \u2014 no downloads. NoMore5Mins counts down so you don't have to.",
+    "h1": "12 Hour Timer",
+    "content": "Twelve hours \u2014 half a full day. This free 12 hour timer is perfect for overnight countdowns, medication reminder cycles, or long event tracking. NoMore5Mins reliably counts down all 720 minutes in your browser.",
+    "useCases": [
+      "Half-day timer",
+      "Overnight countdown",
+      "Event countdown",
+      "Medication reminder cycle"
+    ]
+  }
+]

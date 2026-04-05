@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="About NoMore5Mins - Our Story | NoMore5Mins"
+  description="Learn about NoMore5Mins - free, fast, and reliable online time tools. No downloads, no signups, just the tools you need to manage your time better."
+>
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="font-display text-4xl font-bold text-slate-50 sm:text-5xl">
+      About <span class="text-amber-500">NoMore5Mins</span>
+    </h1>
+
+    <div class="mt-10 space-y-8 text-lg leading-relaxed text-slate-400 dark-muted">
+
+      <section>
+        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Our Story</h2>
+        <p class="mt-4">
+          We have all been there. The alarm goes off and you mutter those infamous words:
+          <strong class="text-amber-500">"just 5 more minutes."</strong> Five minutes become ten.
+          Ten become twenty. Before you know it, you are scrambling out the door, late again,
+          wondering where the morning went.
+        </p>
+        <p class="mt-4">
+          NoMore5Mins was born from that exact struggle. We wanted to build something better
+          than the default alarm on your phone &mdash; something that actually helps you get up,
+          stay focused, and make every minute count. No more snoozing through life. No more
+          "just 5 more minutes."
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Our Mission</h2>
+        <p class="mt-4">
+          Our mission is simple: provide <strong class="text-slate-50 dark-text">reliable, free, and fast</strong>
+          online time tools that anyone can use, anywhere, on any device. Whether you need an alarm clock
+          to wake you up, a timer for your workout, a stopwatch for your experiments, or a Pomodoro
+          timer to power through your study session &mdash; we have got you covered.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">What Makes Us Different</h2>
+        <ul class="mt-4 space-y-3">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 text-amber-500">&#10003;</span>
+            <span><strong class="text-slate-50 dark-text">No downloads required.</strong> Everything runs in your browser. Open the page and start using it immediately.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 text-amber-500">&#10003;</span>
+            <span><strong class="text-slate-50 dark-text">No signups or accounts.</strong> We do not need your email, your name, or your life story. Just use the tools.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 text-amber-500">&#10003;</span>
+            <span><strong class="text-slate-50 dark-text">No invasive tracking.</strong> We use basic analytics to understand how people use our site, but we do not build profiles or sell your data.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 text-amber-500">&#10003;</span>
+            <span><strong class="text-slate-50 dark-text">Your data stays on your device.</strong> Preferences like theme settings and alarm configurations are stored in your browser's localStorage. We never see them.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 text-amber-500">&#10003;</span>
+            <span><strong class="text-slate-50 dark-text">Built with modern technology.</strong> Fast load times, responsive design, dark and light mode, and a clean interface that gets out of your way.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Our Tools</h2>
+        <p class="mt-4">
+          NoMore5Mins offers a growing suite of free online time tools:
+        </p>
+        <ul class="mt-4 space-y-2">
+          <li><a href="/alarm-clock/" class="text-amber-500 hover:text-amber-400 transition-colors">Alarm Clock</a> &mdash; Set alarms with custom sounds, labels, and snooze options</li>
+          <li><a href="/timer/" class="text-amber-500 hover:text-amber-400 transition-colors">Timer</a> &mdash; Countdown timer for cooking, workouts, and more</li>
+          <li><a href="/stopwatch/" class="text-amber-500 hover:text-amber-400 transition-colors">Stopwatch</a> &mdash; Precision stopwatch with lap tracking</li>
+          <li><a href="/pomodoro-timer/" class="text-amber-500 hover:text-amber-400 transition-colors">Pomodoro Timer</a> &mdash; Stay focused with the Pomodoro technique</li>
+          <li><a href="/world-clock/" class="text-amber-500 hover:text-amber-400 transition-colors">World Clock</a> &mdash; Track time across multiple time zones</li>
+          <li><a href="/clock/" class="text-amber-500 hover:text-amber-400 transition-colors">Clock</a> &mdash; A beautiful full-screen clock display</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Contact Us</h2>
+        <p class="mt-4">
+          Have feedback, a feature request, or just want to say hello? We would love to hear from you.
+        </p>
+        <p class="mt-4">
+          Reach us at <a href="mailto:hello@nomore5mins.com" class="text-amber-500 hover:text-amber-400 transition-colors">hello@nomore5mins.com</a>
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

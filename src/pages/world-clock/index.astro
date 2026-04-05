@@ -1,0 +1,328 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+
+const faqItems = [
+  {
+    question: 'How does the world clock determine the current time?',
+    answer: 'The world clock uses your device\'s system time along with the JavaScript Intl.DateTimeFormat API to convert it to each city\'s local time zone. This means the times shown are as accurate as your device\'s clock, which is typically synced via NTP.',
+  },
+  {
+    question: 'Does the world clock account for Daylight Saving Time?',
+    answer: 'Yes. The Intl.DateTimeFormat API automatically handles Daylight Saving Time (DST) transitions for each time zone. When a city observes DST, the displayed time and UTC offset update accordingly.',
+  },
+  {
+    question: 'What does the sun and moon icon mean?',
+    answer: 'The sun icon indicates daytime (between 6:00 AM and 5:59 PM local time) and the moon icon indicates nighttime (between 6:00 PM and 5:59 AM local time). This gives you a quick visual sense of whether people in that city are likely awake.',
+  },
+  {
+    question: 'Can I add more cities to the world clock?',
+    answer: 'Yes. Click the "Add City" button to see a list of additional cities you can add to your display. The world clock supports all major IANA time zones.',
+  },
+  {
+    question: 'Why do some cities show the same time?',
+    answer: 'Cities in the same time zone will display the same current time. For example, Houston and Chicago are both in the US Central time zone (America/Chicago). However, their UTC offsets may differ during DST transitions if the cities observe different DST rules.',
+  },
+];
+---
+
+<ToolLayout
+  title="World Clock - Current Time in Major Cities | NoMore5Mins"
+  description="See current time in cities worldwide. New York, London, Tokyo, Sydney and 18 more cities. Free world clock by NoMore5Mins."
+  toolName="NoMore5Mins World Clock"
+  primaryKeyword="world clock"
+>
+  <div class="mx-auto max-w-6xl px-4 py-6">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'World Clock', href: '/world-clock/' },
+    ]} />
+
+    <!-- Search/Filter -->
+    <div class="mb-6">
+      <input
+        type="text"
+        id="city-search"
+        placeholder="Search cities..."
+        class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:border-amber-500 focus:outline-none md:max-w-sm"
+      />
+    </div>
+
+    <!-- City Time Grid -->
+    <div id="city-grid" class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <!-- Populated by script -->
+    </div>
+
+    <!-- Add City -->
+    <div class="mb-8 text-center">
+      <div class="relative inline-block">
+        <button id="btn-add-city" class="btn-secondary">
+          + Add City
+        </button>
+        <div id="add-city-dropdown" class="absolute left-1/2 z-20 mt-2 hidden max-h-64 w-64 -translate-x-1/2 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 p-2 shadow-xl">
+          <!-- Populated by script -->
+        </div>
+      </div>
+    </div>
+
+    <AdUnit slot="mid" />
+
+    <SEOContent title="About the World Clock">
+      <p>
+        The NoMore5Mins World Clock shows you the current local time in major cities across every
+        inhabited continent. Whether you are scheduling a meeting with international colleagues,
+        calling family overseas, or simply curious about what time it is on the other side of the
+        planet, this tool gives you instant answers.
+      </p>
+      <p>
+        Each city card displays the local time, date, UTC offset, and a day/night indicator so you
+        can quickly tell if it is daytime or nighttime in that location. The clock updates every
+        second and automatically accounts for Daylight Saving Time changes. Use the search bar to
+        quickly find a specific city or add more cities to your display.
+      </p>
+    </SEOContent>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer" />
+  </div>
+</ToolLayout>
+
+<script>
+  // City data (inlined for static generation)
+  interface CityData {
+    name: string;
+    timezone: string;
+    country: string;
+    flag: string;
+    visible: boolean;
+  }
+
+  const countryFlags: Record<string, string> = {
+    US: '\u{1F1FA}\u{1F1F8}', CA: '\u{1F1E8}\u{1F1E6}', MX: '\u{1F1F2}\u{1F1FD}',
+    BR: '\u{1F1E7}\u{1F1F7}', GB: '\u{1F1EC}\u{1F1E7}', FR: '\u{1F1EB}\u{1F1F7}',
+    DE: '\u{1F1E9}\u{1F1EA}', TR: '\u{1F1F9}\u{1F1F7}', RU: '\u{1F1F7}\u{1F1FA}',
+    EG: '\u{1F1EA}\u{1F1EC}', NG: '\u{1F1F3}\u{1F1EC}', AE: '\u{1F1E6}\u{1F1EA}',
+    IN: '\u{1F1EE}\u{1F1F3}', SG: '\u{1F1F8}\u{1F1EC}', CN: '\u{1F1E8}\u{1F1F3}',
+    JP: '\u{1F1EF}\u{1F1F5}', KR: '\u{1F1F0}\u{1F1F7}', AU: '\u{1F1E6}\u{1F1FA}',
+    TH: '\u{1F1F9}\u{1F1ED}', NZ: '\u{1F1F3}\u{1F1FF}', AR: '\u{1F1E6}\u{1F1F7}',
+    ZA: '\u{1F1FF}\u{1F1E6}', PK: '\u{1F1F5}\u{1F1F0}', BD: '\u{1F1E7}\u{1F1E9}',
+    PH: '\u{1F1F5}\u{1F1ED}', IT: '\u{1F1EE}\u{1F1F9}', ES: '\u{1F1EA}\u{1F1F8}',
+    PT: '\u{1F1F5}\u{1F1F9}', SE: '\u{1F1F8}\u{1F1EA}', NO: '\u{1F1F3}\u{1F1F4}',
+    FI: '\u{1F1EB}\u{1F1EE}', PL: '\u{1F1F5}\u{1F1F1}', IL: '\u{1F1EE}\u{1F1F1}',
+    KE: '\u{1F1F0}\u{1F1EA}', CL: '\u{1F1E8}\u{1F1F1}', CO: '\u{1F1E8}\u{1F1F4}',
+    HK: '\u{1F1ED}\u{1F1F0}',
+  };
+
+  const defaultCities: CityData[] = [
+    { name: 'New York', timezone: 'America/New_York', country: 'US', flag: countryFlags.US, visible: true },
+    { name: 'Los Angeles', timezone: 'America/Los_Angeles', country: 'US', flag: countryFlags.US, visible: true },
+    { name: 'Chicago', timezone: 'America/Chicago', country: 'US', flag: countryFlags.US, visible: true },
+    { name: 'Houston', timezone: 'America/Chicago', country: 'US', flag: countryFlags.US, visible: true },
+    { name: 'Phoenix', timezone: 'America/Phoenix', country: 'US', flag: countryFlags.US, visible: true },
+    { name: 'Toronto', timezone: 'America/Toronto', country: 'CA', flag: countryFlags.CA, visible: true },
+    { name: 'Mexico City', timezone: 'America/Mexico_City', country: 'MX', flag: countryFlags.MX, visible: true },
+    { name: 'Sao Paulo', timezone: 'America/Sao_Paulo', country: 'BR', flag: countryFlags.BR, visible: true },
+    { name: 'London', timezone: 'Europe/London', country: 'GB', flag: countryFlags.GB, visible: true },
+    { name: 'Paris', timezone: 'Europe/Paris', country: 'FR', flag: countryFlags.FR, visible: true },
+    { name: 'Berlin', timezone: 'Europe/Berlin', country: 'DE', flag: countryFlags.DE, visible: true },
+    { name: 'Istanbul', timezone: 'Europe/Istanbul', country: 'TR', flag: countryFlags.TR, visible: true },
+    { name: 'Moscow', timezone: 'Europe/Moscow', country: 'RU', flag: countryFlags.RU, visible: true },
+    { name: 'Cairo', timezone: 'Africa/Cairo', country: 'EG', flag: countryFlags.EG, visible: true },
+    { name: 'Lagos', timezone: 'Africa/Lagos', country: 'NG', flag: countryFlags.NG, visible: true },
+    { name: 'Dubai', timezone: 'Asia/Dubai', country: 'AE', flag: countryFlags.AE, visible: true },
+    { name: 'Mumbai', timezone: 'Asia/Kolkata', country: 'IN', flag: countryFlags.IN, visible: true },
+    { name: 'Singapore', timezone: 'Asia/Singapore', country: 'SG', flag: countryFlags.SG, visible: true },
+    { name: 'Beijing', timezone: 'Asia/Shanghai', country: 'CN', flag: countryFlags.CN, visible: true },
+    { name: 'Tokyo', timezone: 'Asia/Tokyo', country: 'JP', flag: countryFlags.JP, visible: true },
+    { name: 'Seoul', timezone: 'Asia/Seoul', country: 'KR', flag: countryFlags.KR, visible: true },
+    { name: 'Sydney', timezone: 'Australia/Sydney', country: 'AU', flag: countryFlags.AU, visible: true },
+  ];
+
+  const extraCities: CityData[] = [
+    { name: 'Bangkok', timezone: 'Asia/Bangkok', country: 'TH', flag: countryFlags.TH, visible: false },
+    { name: 'Auckland', timezone: 'Pacific/Auckland', country: 'NZ', flag: countryFlags.NZ, visible: false },
+    { name: 'Buenos Aires', timezone: 'America/Argentina/Buenos_Aires', country: 'AR', flag: countryFlags.AR, visible: false },
+    { name: 'Johannesburg', timezone: 'Africa/Johannesburg', country: 'ZA', flag: countryFlags.ZA, visible: false },
+    { name: 'Karachi', timezone: 'Asia/Karachi', country: 'PK', flag: countryFlags.PK, visible: false },
+    { name: 'Dhaka', timezone: 'Asia/Dhaka', country: 'BD', flag: countryFlags.BD, visible: false },
+    { name: 'Manila', timezone: 'Asia/Manila', country: 'PH', flag: countryFlags.PH, visible: false },
+    { name: 'Rome', timezone: 'Europe/Rome', country: 'IT', flag: countryFlags.IT, visible: false },
+    { name: 'Madrid', timezone: 'Europe/Madrid', country: 'ES', flag: countryFlags.ES, visible: false },
+    { name: 'Lisbon', timezone: 'Europe/Lisbon', country: 'PT', flag: countryFlags.PT, visible: false },
+    { name: 'Stockholm', timezone: 'Europe/Stockholm', country: 'SE', flag: countryFlags.SE, visible: false },
+    { name: 'Oslo', timezone: 'Europe/Oslo', country: 'NO', flag: countryFlags.NO, visible: false },
+    { name: 'Helsinki', timezone: 'Europe/Helsinki', country: 'FI', flag: countryFlags.FI, visible: false },
+    { name: 'Warsaw', timezone: 'Europe/Warsaw', country: 'PL', flag: countryFlags.PL, visible: false },
+    { name: 'Tel Aviv', timezone: 'Asia/Jerusalem', country: 'IL', flag: countryFlags.IL, visible: false },
+    { name: 'Nairobi', timezone: 'Africa/Nairobi', country: 'KE', flag: countryFlags.KE, visible: false },
+    { name: 'Santiago', timezone: 'America/Santiago', country: 'CL', flag: countryFlags.CL, visible: false },
+    { name: 'Bogota', timezone: 'America/Bogota', country: 'CO', flag: countryFlags.CO, visible: false },
+    { name: 'Hong Kong', timezone: 'Asia/Hong_Kong', country: 'HK', flag: countryFlags.HK, visible: false },
+  ];
+
+  let cities: CityData[] = [...defaultCities];
+
+  const grid = document.getElementById('city-grid') as HTMLElement;
+  const searchInput = document.getElementById('city-search') as HTMLInputElement;
+  const btnAddCity = document.getElementById('btn-add-city') as HTMLButtonElement;
+  const dropdown = document.getElementById('add-city-dropdown') as HTMLElement;
+
+  function getUTCOffset(timezone: string): string {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'shortOffset',
+    });
+    const parts = formatter.formatToParts(now);
+    const tzPart = parts.find((p) => p.type === 'timeZoneName');
+    return tzPart ? tzPart.value.replace('GMT', 'UTC') : '';
+  }
+
+  function getHour(timezone: string): number {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hour: 'numeric',
+      hour12: false,
+    });
+    return parseInt(formatter.format(now));
+  }
+
+  function isDaytime(timezone: string): boolean {
+    const hour = getHour(timezone);
+    return hour >= 6 && hour < 18;
+  }
+
+  function formatCityTime(timezone: string): string {
+    const now = new Date();
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    }).format(now);
+  }
+
+  function formatCityDate(timezone: string): string {
+    const now = new Date();
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    }).format(now);
+  }
+
+  function createCityCard(city: CityData, index: number): string {
+    const dayNight = isDaytime(city.timezone);
+    const icon = dayNight ? '\u2600\uFE0F' : '\u{1F319}';
+    const bgClass = dayNight
+      ? 'border-slate-700 bg-slate-800/50'
+      : 'border-slate-700 bg-slate-900/80';
+
+    return `
+      <div class="city-card rounded-xl border ${bgClass} p-4 transition-all hover:border-amber-500/50" data-city="${city.name.toLowerCase()}" data-index="${index}">
+        <div class="mb-2 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">${city.flag}</span>
+            <h3 class="text-sm font-semibold text-slate-200">${city.name}</h3>
+          </div>
+          <span class="text-lg" title="${dayNight ? 'Daytime' : 'Nighttime'}">${icon}</span>
+        </div>
+        <div class="city-time font-clock text-2xl font-bold text-amber-500 md:text-3xl" data-tz="${city.timezone}">
+          ${formatCityTime(city.timezone)}
+        </div>
+        <div class="mt-1 flex items-center justify-between text-xs text-slate-400">
+          <span class="city-date" data-tz="${city.timezone}">${formatCityDate(city.timezone)}</span>
+          <span class="city-offset rounded bg-slate-700/50 px-2 py-0.5" data-tz="${city.timezone}">${getUTCOffset(city.timezone)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderGrid() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const filtered = cities.filter((c) => c.visible && c.name.toLowerCase().includes(searchTerm));
+    grid.innerHTML = filtered.map((city, i) => createCityCard(city, i)).join('');
+  }
+
+  function updateTimes() {
+    const timeEls = grid.querySelectorAll('.city-time');
+    timeEls.forEach((el) => {
+      const tz = (el as HTMLElement).dataset.tz;
+      if (tz) (el as HTMLElement).textContent = formatCityTime(tz);
+    });
+
+    const dateEls = grid.querySelectorAll('.city-date');
+    dateEls.forEach((el) => {
+      const tz = (el as HTMLElement).dataset.tz;
+      if (tz) (el as HTMLElement).textContent = formatCityDate(tz);
+    });
+
+    // Update day/night icons every minute (re-render)
+    const now = new Date();
+    if (now.getSeconds() === 0) {
+      renderGrid();
+    }
+  }
+
+  function renderDropdown() {
+    const available = extraCities.filter(
+      (ec) => !cities.some((c) => c.timezone === ec.timezone && c.visible)
+    );
+    dropdown.innerHTML = available.length === 0
+      ? '<p class="px-3 py-2 text-sm text-slate-500">All cities added</p>'
+      : available.map((city) => `
+          <button class="add-city-option flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-800" data-name="${city.name}" data-tz="${city.timezone}" data-country="${city.country}" data-flag="${city.flag}">
+            <span>${city.flag}</span>
+            <span>${city.name}</span>
+          </button>
+        `).join('');
+
+    // Add click handlers
+    dropdown.querySelectorAll('.add-city-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = btn as HTMLElement;
+        cities.push({
+          name: el.dataset.name!,
+          timezone: el.dataset.tz!,
+          country: el.dataset.country!,
+          flag: el.dataset.flag!,
+          visible: true,
+        });
+        renderGrid();
+        renderDropdown();
+        dropdown.classList.add('hidden');
+      });
+    });
+  }
+
+  // Toggle dropdown
+  btnAddCity.addEventListener('click', () => {
+    dropdown.classList.toggle('hidden');
+    if (!dropdown.classList.contains('hidden')) {
+      renderDropdown();
+    }
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('#btn-add-city') && !(e.target as HTMLElement).closest('#add-city-dropdown')) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  // Search filter
+  searchInput.addEventListener('input', () => {
+    renderGrid();
+  });
+
+  // Init
+  renderGrid();
+  setInterval(updateTimes, 1000);
+</script>

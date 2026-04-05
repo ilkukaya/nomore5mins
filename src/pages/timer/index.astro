@@ -1,0 +1,440 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+
+const faqItems = [
+  {
+    question: 'How do I set a custom time on the countdown timer?',
+    answer: 'Use the hours, minutes, and seconds input fields to enter your desired duration. You can type in the numbers directly or use the up/down arrows. Then click "Start" to begin the countdown.',
+  },
+  {
+    question: 'Will the timer alert me when time is up?',
+    answer: 'Yes! When the countdown reaches zero, an audible alarm will play and a visual notification will appear on screen. The browser tab title also updates so you can see the status even in another tab.',
+  },
+  {
+    question: 'Can I pause and resume the timer?',
+    answer: 'Absolutely. Click "Pause" at any time to freeze the countdown. Click "Start" again to resume from where you left off. Click "Reset" to return to the setup screen.',
+  },
+  {
+    question: 'Does the timer work if I switch to another browser tab?',
+    answer: 'Yes. The timer continues running in the background and the alarm will still sound when time is up. The page title updates with the remaining time so you can monitor progress from any tab.',
+  },
+  {
+    question: 'What are the quick preset buttons for?',
+    answer: 'Quick presets let you start common durations with a single click — such as 1 minute, 5 minutes, or 25 minutes (great for Pomodoro sessions). Just click a preset and the timer starts immediately.',
+  },
+  {
+    question: 'Is this online timer free to use?',
+    answer: 'Yes, the NoMore5Mins countdown timer is completely free with no sign-up required. It works in any modern browser on desktop and mobile devices.',
+  },
+];
+---
+
+<ToolLayout
+  title="Online Timer - Free Countdown Timer | NoMore5Mins"
+  description="Free online countdown timer with alarm. Set hours, minutes, seconds and start. NoMore5Mins alerts you when time is up."
+  toolName="NoMore5Mins Countdown Timer"
+  primaryKeyword="online timer"
+>
+  <div class="mx-auto max-w-4xl px-4 py-6">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Timer', href: '/timer/' }]} />
+
+    <!-- Timer Display Area -->
+    <section class="card mb-8 flex flex-col items-center py-10">
+      <!-- SVG Progress Ring -->
+      <div class="relative mb-4 flex items-center justify-center">
+        <svg id="progress-ring" class="absolute" width="280" height="280" viewBox="0 0 280 280">
+          <circle
+            cx="140"
+            cy="140"
+            r="130"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"
+            class="text-slate-800"
+          />
+          <circle
+            id="progress-ring-circle"
+            cx="140"
+            cy="140"
+            r="130"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="6"
+            stroke-linecap="round"
+            class="progress-ring-circle text-amber-500"
+            stroke-dasharray="816.81"
+            stroke-dashoffset="0"
+          />
+        </svg>
+        <div class="z-10">
+          <ClockDisplay id="timer-display" size="large" />
+        </div>
+      </div>
+
+      <!-- Timer Status -->
+      <p id="timer-status" class="mt-2 text-sm font-medium tracking-wide text-slate-400 uppercase">
+        Ready
+      </p>
+    </section>
+
+    <!-- Timer Input Controls -->
+    <section id="timer-setup" class="mb-8">
+      <div class="flex items-center justify-center gap-4">
+        <!-- Hours -->
+        <div class="flex flex-col items-center">
+          <label for="input-hours" class="mb-2 text-xs font-medium tracking-wide text-slate-400 uppercase">Hours</label>
+          <div class="flex flex-col items-center gap-1">
+            <button class="time-up-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-hours">&#9650;</button>
+            <input
+              type="number"
+              id="input-hours"
+              class="w-20 rounded-xl border border-slate-700 bg-slate-900 p-3 text-center font-clock text-2xl text-amber-500 focus:border-amber-500 focus:outline-none"
+              value="0"
+              min="0"
+              max="99"
+            />
+            <button class="time-down-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-hours">&#9660;</button>
+          </div>
+        </div>
+
+        <span class="mt-6 font-clock text-3xl text-slate-600">:</span>
+
+        <!-- Minutes -->
+        <div class="flex flex-col items-center">
+          <label for="input-minutes" class="mb-2 text-xs font-medium tracking-wide text-slate-400 uppercase">Minutes</label>
+          <div class="flex flex-col items-center gap-1">
+            <button class="time-up-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-minutes">&#9650;</button>
+            <input
+              type="number"
+              id="input-minutes"
+              class="w-20 rounded-xl border border-slate-700 bg-slate-900 p-3 text-center font-clock text-2xl text-amber-500 focus:border-amber-500 focus:outline-none"
+              value="5"
+              min="0"
+              max="59"
+            />
+            <button class="time-down-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-minutes">&#9660;</button>
+          </div>
+        </div>
+
+        <span class="mt-6 font-clock text-3xl text-slate-600">:</span>
+
+        <!-- Seconds -->
+        <div class="flex flex-col items-center">
+          <label for="input-seconds" class="mb-2 text-xs font-medium tracking-wide text-slate-400 uppercase">Seconds</label>
+          <div class="flex flex-col items-center gap-1">
+            <button class="time-up-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-seconds">&#9650;</button>
+            <input
+              type="number"
+              id="input-seconds"
+              class="w-20 rounded-xl border border-slate-700 bg-slate-900 p-3 text-center font-clock text-2xl text-amber-500 focus:border-amber-500 focus:outline-none"
+              value="0"
+              min="0"
+              max="59"
+            />
+            <button class="time-down-btn btn-secondary !px-3 !py-1 text-lg" data-target="input-seconds">&#9660;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        {[
+          { label: '1 min', seconds: 60 },
+          { label: '3 min', seconds: 180 },
+          { label: '5 min', seconds: 300 },
+          { label: '10 min', seconds: 600 },
+          { label: '15 min', seconds: 900 },
+          { label: '25 min', seconds: 1500 },
+          { label: '30 min', seconds: 1800 },
+          { label: '1 hour', seconds: 3600 },
+        ].map((preset) => (
+          <button
+            class="preset-btn btn-secondary !px-4 !py-2 text-sm"
+            data-seconds={preset.seconds}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <!-- Control Buttons -->
+    <div class="mb-10 flex flex-wrap items-center justify-center gap-3">
+      <button id="timer-start" class="btn-primary">Start</button>
+      <button id="timer-pause" class="btn-secondary hidden">Pause</button>
+      <button id="timer-reset" class="btn-secondary hidden">Reset</button>
+      <button id="timer-fullscreen" class="btn-secondary">Full Screen</button>
+    </div>
+
+    <!-- Timer Complete Modal -->
+    <div id="timer-complete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70">
+      <div class="card alarm-shake mx-4 max-w-sm text-center">
+        <div class="mb-4 text-6xl">&#9200;</div>
+        <h2 class="mb-2 font-display text-3xl font-bold text-amber-500">Time's Up!</h2>
+        <p class="mb-6 text-slate-400">Your countdown has finished.</p>
+        <button id="timer-dismiss" class="btn-primary">Dismiss</button>
+      </div>
+    </div>
+
+    <AdUnit slot="mid" />
+
+    <SEOContent title="How to Use the Online Timer">
+      <p>
+        The NoMore5Mins countdown timer is the easiest way to set a timed alert in your browser. Simply enter
+        your desired hours, minutes, and seconds — or pick a quick preset — and press Start. The animated
+        progress ring gives you a clear visual of how much time remains, and the page title updates in real
+        time so you can keep track even from another tab.
+      </p>
+      <h3 class="font-semibold text-slate-200">Cooking and Baking</h3>
+      <p>
+        Set a timer for your oven, stovetop, or microwave without reaching for a separate device. Whether you
+        are boiling eggs for exactly 7 minutes or resting dough for 30, this timer has you covered.
+      </p>
+      <h3 class="font-semibold text-slate-200">Exercise and Workouts</h3>
+      <p>
+        Time your intervals, planks, or rest periods. Use the quick presets for common workout durations like
+        1, 3, or 5 minutes, or set a custom duration for HIIT rounds.
+      </p>
+      <h3 class="font-semibold text-slate-200">Study Sessions</h3>
+      <p>
+        Pair the timer with study techniques like the Pomodoro method. Set 25-minute focus blocks followed by
+        5-minute breaks. The alarm ensures you never lose track of time while deep in study mode.
+      </p>
+      <h3 class="font-semibold text-slate-200">Work and Productivity</h3>
+      <p>
+        Timebox meetings, deep-work sessions, or breaks. The visual countdown helps maintain focus and the
+        audible alarm brings you back when time is up — no need to watch the clock.
+      </p>
+    </SEOContent>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer" />
+  </div>
+</ToolLayout>
+
+<script>
+  const display = document.getElementById('timer-display')!;
+  const status = document.getElementById('timer-status')!;
+  const setup = document.getElementById('timer-setup')!;
+  const progressCircle = document.getElementById('progress-ring-circle') as SVGCircleElement;
+  const modal = document.getElementById('timer-complete-modal')!;
+
+  const btnStart = document.getElementById('timer-start') as HTMLButtonElement;
+  const btnPause = document.getElementById('timer-pause') as HTMLButtonElement;
+  const btnReset = document.getElementById('timer-reset') as HTMLButtonElement;
+  const btnFullscreen = document.getElementById('timer-fullscreen') as HTMLButtonElement;
+  const btnDismiss = document.getElementById('timer-dismiss') as HTMLButtonElement;
+
+  const inputHours = document.getElementById('input-hours') as HTMLInputElement;
+  const inputMinutes = document.getElementById('input-minutes') as HTMLInputElement;
+  const inputSeconds = document.getElementById('input-seconds') as HTMLInputElement;
+
+  const CIRCUMFERENCE = 2 * Math.PI * 130; // r=130
+  progressCircle.style.strokeDasharray = `${CIRCUMFERENCE}`;
+  progressCircle.style.strokeDashoffset = '0';
+
+  let totalDuration = 0; // total ms
+  let remaining = 0; // ms remaining
+  let timerState: 'setup' | 'running' | 'paused' | 'done' = 'setup';
+  let intervalId: number | null = null;
+  let endTime = 0;
+  let audio: HTMLAudioElement | null = null;
+
+  const originalTitle = document.title;
+
+  function formatTime(ms: number): string {
+    const totalSec = Math.max(0, Math.ceil(ms / 1000));
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    display.textContent = formatTime(remaining);
+  }
+
+  function updateProgress() {
+    if (totalDuration === 0) {
+      progressCircle.style.strokeDashoffset = '0';
+      return;
+    }
+    const fraction = remaining / totalDuration;
+    const offset = CIRCUMFERENCE * (1 - fraction);
+    progressCircle.style.strokeDashoffset = `${offset}`;
+  }
+
+  function updateTitle() {
+    if (timerState === 'running' || timerState === 'paused') {
+      document.title = `${formatTime(remaining)} - Timer | NoMore5Mins`;
+    } else {
+      document.title = originalTitle;
+    }
+  }
+
+  function setDurationFromInputs() {
+    const h = Math.max(0, parseInt(inputHours.value) || 0);
+    const m = Math.max(0, parseInt(inputMinutes.value) || 0);
+    const s = Math.max(0, parseInt(inputSeconds.value) || 0);
+    totalDuration = (h * 3600 + m * 60 + s) * 1000;
+    remaining = totalDuration;
+  }
+
+  function tick() {
+    remaining = Math.max(0, endTime - Date.now());
+    updateDisplay();
+    updateProgress();
+    updateTitle();
+
+    if (remaining <= 0) {
+      timerComplete();
+    }
+  }
+
+  function startTimer() {
+    if (timerState === 'setup') {
+      setDurationFromInputs();
+      if (totalDuration === 0) return;
+    }
+
+    endTime = Date.now() + remaining;
+    timerState = 'running';
+    status.textContent = 'Running';
+    setup.classList.add('hidden');
+    btnStart.classList.add('hidden');
+    btnPause.classList.remove('hidden');
+    btnReset.classList.remove('hidden');
+
+    intervalId = window.setInterval(tick, 100);
+  }
+
+  function pauseTimer() {
+    if (timerState !== 'running') return;
+    timerState = 'paused';
+    status.textContent = 'Paused';
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    remaining = Math.max(0, endTime - Date.now());
+
+    btnPause.classList.add('hidden');
+    btnStart.classList.remove('hidden');
+    updateTitle();
+  }
+
+  function resetTimer() {
+    timerState = 'setup';
+    status.textContent = 'Ready';
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    remaining = 0;
+    totalDuration = 0;
+
+    display.textContent = '00:00:00';
+    progressCircle.style.strokeDashoffset = '0';
+    setup.classList.remove('hidden');
+    btnStart.classList.remove('hidden');
+    btnPause.classList.add('hidden');
+    btnReset.classList.add('hidden');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.title = originalTitle;
+
+    stopAudio();
+  }
+
+  function timerComplete() {
+    timerState = 'done';
+    status.textContent = 'Done!';
+    if (intervalId) clearInterval(intervalId);
+    intervalId = null;
+    remaining = 0;
+    updateDisplay();
+    updateProgress();
+    document.title = "Time's Up! - Timer | NoMore5Mins";
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    playAlarm();
+  }
+
+  function playAlarm() {
+    try {
+      audio = new Audio('/sounds/digital-beep.wav');
+      audio.loop = true;
+      audio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function stopAudio() {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio = null;
+    }
+  }
+
+  // Button handlers
+  btnStart.addEventListener('click', startTimer);
+  btnPause.addEventListener('click', pauseTimer);
+  btnReset.addEventListener('click', resetTimer);
+  btnDismiss.addEventListener('click', () => {
+    stopAudio();
+    resetTimer();
+  });
+
+  // Fullscreen
+  btnFullscreen.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      document.body.classList.add('fullscreen-mode');
+    } else {
+      document.exitFullscreen();
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  // Up/Down buttons
+  document.querySelectorAll('.time-up-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById((btn as HTMLElement).dataset.target!) as HTMLInputElement;
+      const max = parseInt(target.max);
+      target.value = String(Math.min(max, (parseInt(target.value) || 0) + 1));
+    });
+  });
+
+  document.querySelectorAll('.time-down-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById((btn as HTMLElement).dataset.target!) as HTMLInputElement;
+      target.value = String(Math.max(0, (parseInt(target.value) || 0) - 1));
+    });
+  });
+
+  // Quick presets
+  document.querySelectorAll('.preset-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const seconds = parseInt((btn as HTMLElement).dataset.seconds!);
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      inputHours.value = String(h);
+      inputMinutes.value = String(m);
+      inputSeconds.value = String(s);
+      startTimer();
+    });
+  });
+
+  // Initialize display
+  display.textContent = '00:00:00';
+</script>

@@ -1,0 +1,364 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+
+const faqItems = [
+  {
+    question: 'How accurate is this online stopwatch?',
+    answer: 'The stopwatch uses your browser\'s high-resolution performance timer via requestAnimationFrame, giving you smooth millisecond-precision updates. It is accurate enough for everyday timing tasks such as sports, cooking, and presentations.',
+  },
+  {
+    question: 'What are lap times and split times?',
+    answer: 'A lap time is the duration of an individual segment — the time between two consecutive lap presses. A split time is the total elapsed time from the very start to that lap point. Both are recorded each time you press the Lap button.',
+  },
+  {
+    question: 'Can I export my lap times?',
+    answer: 'Yes. Click the "Export Laps" button below the lap table to copy all your lap and split times to the clipboard as formatted text. You can then paste them into a spreadsheet, document, or message.',
+  },
+  {
+    question: 'Does the stopwatch keep running if I switch tabs?',
+    answer: 'Yes. The stopwatch tracks elapsed time based on actual timestamps, so switching tabs or minimizing the browser does not affect accuracy. The display will update correctly when you return.',
+  },
+  {
+    question: 'Are there keyboard shortcuts?',
+    answer: 'Yes. Press Space to start or stop the stopwatch, L to record a lap while running, and R to reset when stopped. These shortcuts make it easy to operate hands-free.',
+  },
+  {
+    question: 'Is this stopwatch free to use?',
+    answer: 'Absolutely. The NoMore5Mins online stopwatch is completely free with no sign-up, no downloads, and no ads blocking the timer. It works in any modern browser on desktop and mobile.',
+  },
+];
+---
+
+<ToolLayout
+  title="Online Stopwatch - Free Stopwatch Timer | NoMore5Mins"
+  description="Free online stopwatch with lap times and millisecond precision. Start, stop, lap — no downloads needed. NoMore5Mins."
+  toolName="NoMore5Mins Online Stopwatch"
+  primaryKeyword="online stopwatch"
+>
+  <div class="mx-auto max-w-4xl px-4 py-6">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Stopwatch', href: '/stopwatch/' }]} />
+
+    <!-- Stopwatch Display -->
+    <section class="card mb-8 flex flex-col items-center py-10">
+      <ClockDisplay id="stopwatch-display" size="large" />
+
+      <!-- Keyboard Shortcuts Hint -->
+      <p class="mt-4 text-xs text-slate-500">
+        Keyboard: <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-slate-300">Space</kbd> = Start/Stop,
+        <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-slate-300">L</kbd> = Lap,
+        <kbd class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-slate-300">R</kbd> = Reset
+      </p>
+    </section>
+
+    <!-- Control Buttons -->
+    <div class="mb-10 flex flex-wrap items-center justify-center gap-3">
+      <button id="sw-start" class="btn-primary">Start</button>
+      <button id="sw-stop" class="btn-danger hidden">Stop</button>
+      <button id="sw-lap" class="btn-secondary hidden">Lap</button>
+      <button id="sw-reset" class="btn-secondary hidden">Reset</button>
+      <button id="sw-fullscreen" class="btn-secondary">Full Screen</button>
+    </div>
+
+    <!-- Lap Times Table -->
+    <section id="lap-table" class="mb-8 hidden">
+      <div class="card overflow-hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+          <h2 class="font-display text-sm font-semibold text-slate-200 uppercase tracking-wide">Lap Times</h2>
+          <button id="sw-export" class="btn-secondary !px-3 !py-1.5 text-xs">Export Laps</button>
+        </div>
+        <div class="max-h-80 overflow-y-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase tracking-wide">
+                <th class="px-4 py-2 text-left">#</th>
+                <th class="px-4 py-2 text-right">Lap Time</th>
+                <th class="px-4 py-2 text-right">Split Time</th>
+              </tr>
+            </thead>
+            <tbody id="lap-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <AdUnit slot="mid" />
+
+    <SEOContent title="How to Use the Online Stopwatch">
+      <p>
+        The NoMore5Mins online stopwatch gives you millisecond-precision timing right in your browser.
+        Click Start to begin, Stop to pause, and Lap to record split times. The display updates smoothly
+        using your browser's animation frame for a fluid experience, and the page title shows the elapsed
+        time so you can monitor it from any tab.
+      </p>
+      <h3 class="font-semibold text-slate-200">Sports and Athletics</h3>
+      <p>
+        Time sprints, laps, intervals, or rest periods. Use the lap feature to record each split and compare
+        performance across segments. The fastest and slowest laps are automatically highlighted so you can
+        spot patterns at a glance.
+      </p>
+      <h3 class="font-semibold text-slate-200">Cooking</h3>
+      <p>
+        Track how long each step of a recipe takes — from searing a steak to resting dough. Unlike a countdown
+        timer, the stopwatch lets you measure elapsed time without setting a target first, perfect for when
+        you are just keeping an eye on how long things take.
+      </p>
+      <h3 class="font-semibold text-slate-200">Presentations and Speeches</h3>
+      <p>
+        Rehearse talks and presentations with a running clock. Record lap times to mark section transitions
+        and export the results to review your pacing. Stay within your allotted time without needing a
+        separate timing device.
+      </p>
+    </SEOContent>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer" />
+  </div>
+</ToolLayout>
+
+<script>
+  const display = document.getElementById('stopwatch-display')!;
+  const btnStart = document.getElementById('sw-start') as HTMLButtonElement;
+  const btnStop = document.getElementById('sw-stop') as HTMLButtonElement;
+  const btnLap = document.getElementById('sw-lap') as HTMLButtonElement;
+  const btnReset = document.getElementById('sw-reset') as HTMLButtonElement;
+  const btnFullscreen = document.getElementById('sw-fullscreen') as HTMLButtonElement;
+  const btnExport = document.getElementById('sw-export') as HTMLButtonElement;
+  const lapTable = document.getElementById('lap-table')!;
+  const lapTbody = document.getElementById('lap-tbody')!;
+
+  let startTime = 0;
+  let elapsed = 0;
+  let running = false;
+  let rafId: number | null = null;
+
+  interface Lap {
+    number: number;
+    lapTime: number;   // ms for this lap segment
+    splitTime: number; // ms total from start
+  }
+
+  const laps: Lap[] = [];
+  let lastLapSplit = 0;
+
+  const originalTitle = document.title;
+
+  function formatTime(ms: number): string {
+    const totalMs = Math.max(0, ms);
+    const h = Math.floor(totalMs / 3600000);
+    const m = Math.floor((totalMs % 3600000) / 60000);
+    const s = Math.floor((totalMs % 60000) / 1000);
+    const cs = Math.floor((totalMs % 1000) / 10);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+  }
+
+  function formatTimePlain(ms: number): string {
+    const totalMs = Math.max(0, ms);
+    const h = Math.floor(totalMs / 3600000);
+    const m = Math.floor((totalMs % 3600000) / 60000);
+    const s = Math.floor((totalMs % 60000) / 1000);
+    const cs = Math.floor((totalMs % 1000) / 10);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    display.textContent = formatTime(elapsed);
+  }
+
+  function updateTitle() {
+    if (running) {
+      document.title = `${formatTime(elapsed)} - Stopwatch | NoMore5Mins`;
+    } else if (elapsed > 0) {
+      document.title = `${formatTime(elapsed)} (Stopped) - Stopwatch | NoMore5Mins`;
+    } else {
+      document.title = originalTitle;
+    }
+  }
+
+  function tick() {
+    elapsed = Date.now() - startTime;
+    updateDisplay();
+    updateTitle();
+    if (running) {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    startTime = Date.now() - elapsed;
+    rafId = requestAnimationFrame(tick);
+
+    btnStart.classList.add('hidden');
+    btnStop.classList.remove('hidden');
+    btnLap.classList.remove('hidden');
+    btnReset.classList.add('hidden');
+  }
+
+  function stop() {
+    if (!running) return;
+    running = false;
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    elapsed = Date.now() - startTime;
+    updateDisplay();
+    updateTitle();
+
+    btnStop.classList.add('hidden');
+    btnLap.classList.add('hidden');
+    btnStart.classList.remove('hidden');
+    btnReset.classList.remove('hidden');
+  }
+
+  function reset() {
+    running = false;
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    elapsed = 0;
+    startTime = 0;
+    lastLapSplit = 0;
+    laps.length = 0;
+
+    updateDisplay();
+    document.title = originalTitle;
+
+    btnStart.classList.remove('hidden');
+    btnStop.classList.add('hidden');
+    btnLap.classList.add('hidden');
+    btnReset.classList.add('hidden');
+    lapTable.classList.add('hidden');
+    lapTbody.innerHTML = '';
+  }
+
+  function recordLap() {
+    if (!running) return;
+    const splitTime = elapsed;
+    const lapTime = splitTime - lastLapSplit;
+    lastLapSplit = splitTime;
+
+    laps.push({
+      number: laps.length + 1,
+      lapTime,
+      splitTime,
+    });
+
+    renderLaps();
+    lapTable.classList.remove('hidden');
+  }
+
+  function renderLaps() {
+    // Find fastest and slowest lap times (only if more than 1 lap)
+    let fastestIdx = -1;
+    let slowestIdx = -1;
+
+    if (laps.length > 1) {
+      let fastest = Infinity;
+      let slowest = -Infinity;
+      laps.forEach((lap, i) => {
+        if (lap.lapTime < fastest) {
+          fastest = lap.lapTime;
+          fastestIdx = i;
+        }
+        if (lap.lapTime > slowest) {
+          slowest = lap.lapTime;
+          slowestIdx = i;
+        }
+      });
+    }
+
+    lapTbody.innerHTML = '';
+
+    // Render in reverse order (newest first)
+    for (let i = laps.length - 1; i >= 0; i--) {
+      const lap = laps[i];
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-slate-800/50';
+
+      let rowClass = 'text-slate-300';
+      if (i === fastestIdx) rowClass = 'text-green-400';
+      if (i === slowestIdx) rowClass = 'text-red-400';
+
+      tr.innerHTML = `
+        <td class="px-4 py-2 text-left font-mono ${rowClass}">${lap.number}</td>
+        <td class="px-4 py-2 text-right font-mono ${rowClass}">${formatTime(lap.lapTime)}</td>
+        <td class="px-4 py-2 text-right font-mono ${rowClass}">${formatTime(lap.splitTime)}</td>
+      `;
+      lapTbody.appendChild(tr);
+    }
+  }
+
+  function exportLaps() {
+    if (laps.length === 0) return;
+    let text = 'Lap\tLap Time\tSplit Time\n';
+    laps.forEach((lap) => {
+      text += `${lap.number}\t${formatTime(lap.lapTime)}\t${formatTime(lap.splitTime)}\n`;
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btnExport.textContent;
+      btnExport.textContent = 'Copied!';
+      setTimeout(() => {
+        btnExport.textContent = original;
+      }, 1500);
+    }).catch(() => {});
+  }
+
+  // Button handlers
+  btnStart.addEventListener('click', start);
+  btnStop.addEventListener('click', stop);
+  btnLap.addEventListener('click', recordLap);
+  btnReset.addEventListener('click', reset);
+  btnExport.addEventListener('click', exportLaps);
+
+  // Fullscreen
+  btnFullscreen.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      document.body.classList.add('fullscreen-mode');
+    } else {
+      document.exitFullscreen();
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen-mode');
+    }
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Don't trigger if user is typing in an input
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+    switch (e.code) {
+      case 'Space':
+        e.preventDefault();
+        if (running) {
+          stop();
+        } else {
+          start();
+        }
+        break;
+      case 'KeyL':
+        if (running) recordLap();
+        break;
+      case 'KeyR':
+        if (!running && elapsed > 0) reset();
+        break;
+    }
+  });
+
+  // Initialize display
+  display.textContent = '00:00:00.00';
+</script>

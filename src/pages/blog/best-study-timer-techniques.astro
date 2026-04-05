@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Best Study Timer Techniques for Students | NoMore5Mins"
+  description="From Pomodoro to time blocking, explore the best timer-based study methods that help students stay focused and retain more information."
+  type="article"
+>
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <article>
+      <header class="mb-10">
+        <a href="/blog/" class="text-sm text-amber-500 hover:text-amber-400 transition-colors">&larr; Back to Blog</a>
+        <h1 class="mt-4 font-display text-4xl font-bold text-slate-50 sm:text-5xl">
+          Best Study Timer Techniques for Students
+        </h1>
+        <div class="mt-4 flex items-center gap-4 text-sm text-slate-400 dark-muted">
+          <span>By NoMore5Mins Team</span>
+          <span class="text-slate-600">|</span>
+          <time datetime="2026-04">April 2026</time>
+        </div>
+      </header>
+
+      <div class="space-y-8 text-lg leading-relaxed text-slate-400 dark-muted">
+        <p>
+          Studying effectively is not about spending more hours at your desk. It is about
+          using the right techniques to maximize focus and retention. Timer-based study methods
+          like the Pomodoro Technique, time blocking, and spaced repetition can transform the
+          way you learn. This upcoming guide breaks down the best approaches for students at
+          every level.
+        </p>
+
+        <div class="card text-center">
+          <p class="font-display text-xl font-semibold text-amber-500">Coming Soon</p>
+          <p class="mt-2 text-slate-400 dark-muted">
+            This article is currently being written. Check back soon for the full guide.
+          </p>
+          <a
+            href="/pomodoro-timer/"
+            class="mt-4 inline-block text-amber-500 hover:text-amber-400 transition-colors font-medium"
+          >
+            Try the NoMore5Mins Pomodoro Timer &rarr;
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

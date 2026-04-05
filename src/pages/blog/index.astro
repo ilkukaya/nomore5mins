@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const posts = [
+  {
+    title: 'How to Wake Up Early: A Complete Guide',
+    href: '/blog/how-to-wake-up-early/',
+    excerpt: 'Struggling to get out of bed? Learn proven strategies for becoming an early riser, from optimizing your sleep environment to building a morning routine that sticks.',
+  },
+  {
+    title: 'Why You Keep Hitting Snooze (And How to Stop)',
+    href: '/blog/why-you-keep-hitting-snooze/',
+    excerpt: 'The science behind sleep inertia and why your brain craves "just 5 more minutes." Discover practical techniques to break the snooze habit for good.',
+  },
+  {
+    title: 'The Pomodoro Technique: A Complete Guide',
+    href: '/blog/pomodoro-technique-guide/',
+    excerpt: 'Master the art of focused work with the Pomodoro Technique. Learn the history, method, and tips to boost your productivity in 25-minute intervals.',
+  },
+  {
+    title: 'Online Alarm Clock vs Phone Alarm: Which is Better?',
+    href: '/blog/online-alarm-vs-phone-alarm/',
+    excerpt: 'Comparing browser-based alarm clocks with your phone\'s built-in alarm. Discover when each option shines and how to get the most reliable wake-up call.',
+  },
+  {
+    title: 'Best Study Timer Techniques for Students',
+    href: '/blog/best-study-timer-techniques/',
+    excerpt: 'From Pomodoro to time blocking, explore the best timer-based study methods that help students stay focused and retain more information.',
+  },
+  {
+    title: 'The 5-Minute Rule for Productivity',
+    href: '/blog/5-minute-rule-productivity/',
+    excerpt: 'How committing to just five minutes can help you overcome procrastination, build momentum, and tackle even the most daunting tasks on your list.',
+  },
+];
+---
+
+<BaseLayout
+  title="Blog - Time Management Tips & Guides | NoMore5Mins"
+  description="Tips, guides, and insights about time management, productivity, and making every minute count. From the NoMore5Mins team."
+>
+  <Header />
+
+  <main class="mx-auto max-w-5xl px-4 py-16">
+    <div class="text-center">
+      <h1 class="font-display text-4xl font-bold text-slate-50 sm:text-5xl">
+        NoMore5Mins <span class="text-amber-500">Blog</span>
+      </h1>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-slate-400 dark-muted">
+        Tips, guides, and insights about time management, productivity, and making every minute count.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <a
+          href={post.href}
+          class="group card flex flex-col justify-between transition-transform hover:-translate-y-1 hover:border-amber-500/50"
+        >
+          <div>
+            <h2 class="font-display text-xl font-semibold text-slate-50 dark-text group-hover:text-amber-500 transition-colors">
+              {post.title}
+            </h2>
+            <p class="mt-3 text-sm leading-relaxed text-slate-400 dark-muted">
+              {post.excerpt}
+            </p>
+          </div>
+          <span class="mt-4 inline-block text-sm font-medium text-amber-500 transition-colors group-hover:text-amber-400">
+            Read more &rarr;
+          </span>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

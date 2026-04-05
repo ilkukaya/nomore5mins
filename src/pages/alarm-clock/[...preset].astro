@@ -1,0 +1,358 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ClockDisplay from '../../components/ClockDisplay.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import SEOContent from '../../components/SEOContent.astro';
+import FAQ from '../../components/FAQ.astro';
+import presets from '../../content/alarms/presets.json';
+
+export function getStaticPaths() {
+  return presets.map((preset) => ({
+    params: { preset: preset.slug },
+    props: { preset },
+  }));
+}
+
+const { preset } = Astro.props;
+
+const canonicalUrl = `https://nomore5mins.netlify.app/alarm-clock/${preset.slug}/`;
+
+const faqItems = [
+  {
+    question: 'Will the alarm work if I close my browser?',
+    answer:
+      'No. The alarm requires the browser tab to remain open. The alarm sound plays through your browser, so closing the tab or shutting down the browser will stop it. You can switch to other tabs and the alarm will still fire when the time comes.',
+  },
+  {
+    question: 'Can I change the alarm sound?',
+    answer:
+      'Yes! Use the sound selector below the clock to choose from several built-in alarm tones. You can also adjust the volume using the volume slider before starting the alarm.',
+  },
+  {
+    question: `What time should I go to bed to wake up at ${preset.display}?`,
+    answer: `To get a full 7-8 hours of sleep before a ${preset.display} alarm, you should go to bed by ${preset.bedtime}. This accounts for about 15 minutes to fall asleep and ensures you complete multiple full sleep cycles.`,
+  },
+  {
+    question: 'Is this alarm clock free?',
+    answer:
+      'Yes, the NoMore5Mins online alarm clock is completely free. No sign-up, no downloads, no ads blocking functionality. It works in any modern browser on desktop and mobile devices.',
+  },
+  {
+    question: `How do I set an alarm for ${preset.display}?`,
+    answer: `This page is already pre-set for ${preset.display}. Simply click the "Start Alarm" button and leave the browser tab open. The alarm will sound at ${preset.display} with your chosen alarm tone.`,
+  },
+];
+---
+
+<ToolLayout
+  title={preset.title}
+  description={preset.description}
+  canonicalUrl={canonicalUrl}
+  toolName={`Set Alarm for ${preset.display}`}
+  primaryKeyword={`set alarm for ${preset.display.toLowerCase()}`}
+>
+  <div class="mx-auto max-w-4xl px-4 py-6">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Alarm Clock', href: '/alarm-clock/' },
+        { label: `Set Alarm for ${preset.display}`, href: canonicalUrl },
+      ]}
+    />
+
+    <!-- Hidden preset data for JS -->
+    <div id="preset-data" data-hour={preset.hour} data-minute={preset.minute} class="hidden"></div>
+
+    <!-- Main alarm section -->
+    <section class="card mb-8 flex flex-col items-center py-10">
+      <h1 class="mb-4 font-display text-3xl font-bold text-slate-50 md:text-4xl">
+        {preset.h1}
+      </h1>
+      <p class="mb-6 text-center text-slate-400">
+        Your alarm is pre-set for {preset.display}. Click Start Alarm to begin the countdown.
+      </p>
+
+      <!-- Current time -->
+      <div class="mb-4">
+        <ClockDisplay id="preset-clock" size="large" />
+      </div>
+
+      <!-- Countdown -->
+      <p id="preset-countdown" class="mb-6 text-lg font-medium text-amber-500">
+        Calculating...
+      </p>
+
+      <!-- Sound selector -->
+      <div class="mb-4 flex flex-wrap items-center justify-center gap-4">
+        <div class="flex flex-col items-center">
+          <label for="alarm-sound" class="mb-1 text-xs font-medium tracking-wide text-slate-400 uppercase">Sound</label>
+          <select
+            id="alarm-sound"
+            class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 focus:border-amber-500 focus:outline-none"
+          >
+            <option value="/sounds/classic-ring.wav">Classic Ring</option>
+            <option value="/sounds/digital-beep.wav">Digital Beep</option>
+            <option value="/sounds/gentle-chime.wav">Gentle Chime</option>
+            <option value="/sounds/morning-birds.wav">Morning Birds</option>
+            <option value="/sounds/rooster-crow.wav">Rooster Crow</option>
+            <option value="/sounds/nuclear-alert.wav">Nuclear Alert</option>
+            <option value="/sounds/piano-melody.wav">Piano Melody</option>
+            <option value="/sounds/ocean-waves.wav">Ocean Waves</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <label for="alarm-volume" class="mb-1 text-xs font-medium tracking-wide text-slate-400 uppercase">Volume</label>
+          <input
+            type="range"
+            id="alarm-volume"
+            min="0"
+            max="1"
+            step="0.1"
+            value="0.8"
+            class="w-28 accent-amber-500"
+          />
+        </div>
+      </div>
+
+      <!-- Start / Stop buttons -->
+      <div class="flex gap-3">
+        <button id="btn-start-alarm" class="btn-primary text-lg">Start Alarm</button>
+        <button id="btn-stop-alarm" class="btn-secondary hidden text-lg">Stop Alarm</button>
+      </div>
+
+      <!-- Status -->
+      <p id="alarm-status" class="mt-4 text-sm text-slate-500"></p>
+    </section>
+
+    <!-- Alarm ringing modal -->
+    <div id="alarm-ringing-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70">
+      <div class="card alarm-shake mx-4 max-w-sm text-center">
+        <div class="mb-4 text-6xl">&#9200;</div>
+        <h2 class="mb-2 font-display text-3xl font-bold text-amber-500">Wake Up!</h2>
+        <p class="mb-2 text-slate-400">Your {preset.display} alarm is ringing!</p>
+        <p id="modal-time" class="mb-6 font-clock text-2xl text-slate-200"></p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <button id="btn-dismiss" class="btn-primary">Dismiss</button>
+          <button id="btn-snooze" class="btn-secondary">Snooze 5 min</button>
+        </div>
+      </div>
+    </div>
+
+    <AdUnit slot="mid-alarm" format="horizontal" />
+
+    <SEOContent title={`Why Wake Up at ${preset.display}?`}>
+      <p set:html={preset.content} />
+      <h3 class="font-semibold text-slate-200">Recommended Bedtime</h3>
+      <p>
+        To wake up refreshed at {preset.display}, go to bed by {preset.bedtime} for 7-8 hours of sleep.
+        This allows time to fall asleep and complete multiple full sleep cycles of roughly 90 minutes each,
+        so you wake at the lightest stage of sleep feeling alert and energized.
+      </p>
+      <h3 class="font-semibold text-slate-200">Tips for Waking Up at {preset.display}</h3>
+      <ul class="list-inside list-disc space-y-1">
+        <li>Place your device across the room so you must get up to dismiss the alarm.</li>
+        <li>Avoid screens for at least 30 minutes before your target bedtime.</li>
+        <li>Keep a consistent sleep schedule, even on weekends.</li>
+        <li>Open curtains or turn on bright lights immediately after waking.</li>
+        <li>Prepare your morning the night before to reduce decision fatigue.</li>
+      </ul>
+      <h3 class="font-semibold text-slate-200">{preset.useCase}</h3>
+      <p>
+        Whether you need to catch an early flight, start a morning workout routine, or simply establish a
+        healthier sleep pattern, setting a reliable alarm for {preset.display} is the first step. This free
+        online alarm clock requires no downloads and works on any device with a browser.
+      </p>
+    </SEOContent>
+
+    <FAQ items={faqItems} />
+
+    <AdUnit slot="footer-alarm" format="horizontal" />
+  </div>
+</ToolLayout>
+
+<script>
+  // Alarm preset page logic
+  const presetData = document.getElementById('preset-data')!;
+  const targetHour = parseInt(presetData.dataset.hour!);
+  const targetMinute = parseInt(presetData.dataset.minute!);
+
+  const clockEl = document.getElementById('preset-clock')!;
+  const countdownEl = document.getElementById('preset-countdown')!;
+  const statusEl = document.getElementById('alarm-status')!;
+  const btnStart = document.getElementById('btn-start-alarm') as HTMLButtonElement;
+  const btnStop = document.getElementById('btn-stop-alarm') as HTMLButtonElement;
+  const btnDismiss = document.getElementById('btn-dismiss') as HTMLButtonElement;
+  const btnSnooze = document.getElementById('btn-snooze') as HTMLButtonElement;
+  const modal = document.getElementById('alarm-ringing-modal')!;
+  const modalTime = document.getElementById('modal-time')!;
+  const soundSelect = document.getElementById('alarm-sound') as HTMLSelectElement;
+  const volumeSlider = document.getElementById('alarm-volume') as HTMLInputElement;
+
+  let alarmActive = false;
+  let alarmHour = targetHour;
+  let alarmMinute = targetMinute;
+  let tickInterval: number | null = null;
+  let audio: HTMLAudioElement | null = null;
+  let snoozeCount = 0;
+  const MAX_SNOOZES = 3;
+  const originalTitle = document.title;
+
+  function padZero(n: number): string {
+    return String(n).padStart(2, '0');
+  }
+
+  function formatTime12(h: number, m: number, s: number): string {
+    const period = h >= 12 ? 'PM' : 'AM';
+    const displayH = h % 12 || 12;
+    return `${padZero(displayH)}:${padZero(m)}:${padZero(s)} ${period}`;
+  }
+
+  function getTimeUntil(h: number, m: number): { hours: number; minutes: number; seconds: number } {
+    const now = new Date();
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target <= now) {
+      target.setDate(target.getDate() + 1);
+    }
+    const diff = Math.floor((target.getTime() - now.getTime()) / 1000);
+    return {
+      hours: Math.floor(diff / 3600),
+      minutes: Math.floor((diff % 3600) / 60),
+      seconds: diff % 60,
+    };
+  }
+
+  function tick() {
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes();
+    const s = now.getSeconds();
+
+    // Update clock display
+    clockEl.textContent = formatTime12(h, m, s);
+
+    if (alarmActive) {
+      // Check if alarm should ring
+      if (h === alarmHour && m === alarmMinute && s === 0) {
+        triggerAlarm();
+        return;
+      }
+
+      // Update countdown
+      const until = getTimeUntil(alarmHour, alarmMinute);
+      const parts: string[] = [];
+      if (until.hours > 0) parts.push(`${until.hours} hour${until.hours !== 1 ? 's' : ''}`);
+      if (until.minutes > 0) parts.push(`${until.minutes} minute${until.minutes !== 1 ? 's' : ''}`);
+      if (until.hours === 0) parts.push(`${until.seconds} second${until.seconds !== 1 ? 's' : ''}`);
+      countdownEl.textContent = `Alarm rings in ${parts.join(' ')}`;
+
+      // Update title with countdown
+      const cdStr = `${padZero(until.hours)}:${padZero(until.minutes)}:${padZero(until.seconds)}`;
+      document.title = `\u23F0 ${cdStr} - Alarm Set | NoMore5Mins`;
+    } else {
+      countdownEl.textContent = 'Click Start Alarm to begin';
+      document.title = originalTitle;
+    }
+  }
+
+  function triggerAlarm() {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    const now = new Date();
+    modalTime.textContent = formatTime12(now.getHours(), now.getMinutes(), now.getSeconds());
+    document.title = '\uD83D\uDD14 ALARM! Wake Up! | NoMore5Mins';
+    countdownEl.textContent = 'RINGING!';
+    playSound();
+  }
+
+  function playSound() {
+    stopSound();
+    try {
+      audio = new Audio(soundSelect.value);
+      audio.loop = true;
+      audio.volume = parseFloat(volumeSlider.value);
+      audio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function stopSound() {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio = null;
+    }
+  }
+
+  function startAlarm() {
+    alarmActive = true;
+    alarmHour = targetHour;
+    alarmMinute = targetMinute;
+    snoozeCount = 0;
+    btnStart.classList.add('hidden');
+    btnStop.classList.remove('hidden');
+    statusEl.textContent = `Alarm set for ${padZero(targetHour % 12 || 12)}:${padZero(targetMinute)} ${targetHour >= 12 ? 'PM' : 'AM'}`;
+    tick();
+  }
+
+  function stopAlarm() {
+    alarmActive = false;
+    stopSound();
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    btnStop.classList.add('hidden');
+    btnStart.classList.remove('hidden');
+    statusEl.textContent = '';
+    document.title = originalTitle;
+    countdownEl.textContent = 'Click Start Alarm to begin';
+  }
+
+  function dismissAlarm() {
+    stopSound();
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    alarmActive = false;
+    btnStop.classList.add('hidden');
+    btnStart.classList.remove('hidden');
+    statusEl.textContent = 'Alarm dismissed.';
+    document.title = originalTitle;
+    countdownEl.textContent = 'Alarm dismissed. Click Start Alarm to set again.';
+  }
+
+  function snoozeAlarm() {
+    snoozeCount++;
+    if (snoozeCount >= MAX_SNOOZES) {
+      btnSnooze.disabled = true;
+      btnSnooze.textContent = 'No more snoozes';
+    }
+    stopSound();
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    // Set alarm to 5 minutes from now
+    const now = new Date();
+    const snoozeTime = new Date(now.getTime() + 5 * 60 * 1000);
+    alarmHour = snoozeTime.getHours();
+    alarmMinute = snoozeTime.getMinutes();
+    alarmActive = true;
+
+    statusEl.textContent = `Snoozed! Alarm will ring at ${padZero(alarmHour % 12 || 12)}:${padZero(alarmMinute)} ${alarmHour >= 12 ? 'PM' : 'AM'}`;
+  }
+
+  // Event listeners
+  btnStart.addEventListener('click', startAlarm);
+  btnStop.addEventListener('click', stopAlarm);
+  btnDismiss.addEventListener('click', dismissAlarm);
+  btnSnooze.addEventListener('click', snoozeAlarm);
+
+  volumeSlider.addEventListener('input', () => {
+    if (audio) {
+      audio.volume = parseFloat(volumeSlider.value);
+    }
+  });
+
+  // Start clock tick
+  tickInterval = window.setInterval(tick, 1000);
+  tick();
+</script>

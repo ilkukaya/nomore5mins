@@ -1,0 +1,10 @@
+[
+  { "id": "classic-ring", "name": "Classic Ring", "file": "/sounds/classic-ring.wav", "description": "Traditional alarm bell sound" },
+  { "id": "digital-beep", "name": "Digital Beep", "file": "/sounds/digital-beep.wav", "description": "Sharp electronic beep pattern" },
+  { "id": "gentle-chime", "name": "Gentle Chime", "file": "/sounds/gentle-chime.wav", "description": "Soft meditation bell" },
+  { "id": "morning-birds", "name": "Morning Birds", "file": "/sounds/morning-birds.wav", "description": "Dawn chorus nature sounds" },
+  { "id": "rooster-crow", "name": "Rooster Crow", "file": "/sounds/rooster-crow.wav", "description": "Classic rooster wake-up call" },
+  { "id": "nuclear-alert", "name": "Nuclear Alert", "file": "/sounds/nuclear-alert.wav", "description": "Emergency siren - extremely loud!" },
+  { "id": "piano-melody", "name": "Piano Melody", "file": "/sounds/piano-melody.wav", "description": "Simple piano arpeggio" },
+  { "id": "ocean-waves", "name": "Ocean Waves", "file": "/sounds/ocean-waves.wav", "description": "Gentle ocean surf" }
+]

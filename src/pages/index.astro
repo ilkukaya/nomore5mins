@@ -1,0 +1,185 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+import ClockDisplay from '../components/ClockDisplay.astro';
+import FAQ from '../components/FAQ.astro';
+import SEOContent from '../components/SEOContent.astro';
+import AdUnit from '../components/AdUnit.astro';
+
+const faqItems = [
+  {
+    question: 'What is NoMore5Mins?',
+    answer: 'NoMore5Mins is a free suite of online time tools including an alarm clock, countdown timer, stopwatch, and Pomodoro timer. It runs entirely in your browser with no downloads or sign-ups required.',
+  },
+  {
+    question: 'Is NoMore5Mins free?',
+    answer: 'Yes, NoMore5Mins is 100% free to use. All tools — alarm clock, timer, stopwatch, and Pomodoro timer — are available at no cost with no hidden fees or premium tiers.',
+  },
+  {
+    question: 'Do I need to download anything?',
+    answer: 'No. NoMore5Mins works directly in your web browser on any device. There is nothing to install — just open the site and start using the tools immediately.',
+  },
+  {
+    question: 'Will alarms work if I close the tab?',
+    answer: 'Alarms require the browser tab to remain open. If you close the tab, alarms will not ring. We recommend keeping the tab open and ensuring your device does not go to sleep. Enable browser notifications for an extra layer of reliability.',
+  },
+  {
+    question: 'What devices does NoMore5Mins work on?',
+    answer: 'NoMore5Mins works on any device with a modern web browser — desktops, laptops, tablets, and smartphones. It supports Chrome, Firefox, Safari, Edge, and other major browsers.',
+  },
+  {
+    question: 'How is NoMore5Mins different from phone alarms?',
+    answer: 'NoMore5Mins runs in your browser, making it ideal for use on computers where phone alarms are inconvenient. It offers multiple alarm sounds, a fullscreen clock display, and tools like timers and stopwatches all in one place — no app switching needed.',
+  },
+];
+---
+
+<ToolLayout
+  title="Free Online Alarm Clock, Timer & Stopwatch | NoMore5Mins"
+  description="Free online alarm clock that won't let you down. Set alarms, timers & stopwatches — no downloads, no signup. NoMore5Mins."
+  toolName="NoMore5Mins Online Tools"
+  primaryKeyword="online alarm clock"
+>
+  <!-- Hero Section -->
+  <section class="mx-auto max-w-4xl px-4 pb-12 pt-8 text-center">
+    <ClockDisplay id="main-clock" size="large" />
+
+    <div class="mt-4 flex items-center justify-center gap-4 text-lg text-slate-400">
+      <span id="main-ampm" class="font-clock text-amber-500">--</span>
+      <span class="text-slate-600">|</span>
+      <span id="main-date" class="text-sm">Loading date...</span>
+    </div>
+
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <a href="/alarm-clock/" class="btn-primary inline-block text-center">Set Alarm</a>
+      <button id="fullscreen-btn" class="btn-secondary">Full Screen</button>
+    </div>
+
+    <p class="mt-6 font-display text-lg text-slate-400 md:text-xl">
+      No More 5 Minutes. Your alarm starts now.
+    </p>
+  </section>
+
+  <!-- Quick Tools Grid -->
+  <section class="mx-auto max-w-5xl px-4 py-12">
+    <h2 class="mb-8 text-center font-display text-2xl font-bold text-slate-50 md:text-3xl">
+      Free Online Time Tools
+    </h2>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/alarm-clock/" class="card group block text-center transition-transform hover:-translate-y-1">
+        <div class="mb-3 text-4xl">&#9200;</div>
+        <h3 class="mb-2 font-display text-lg font-semibold text-slate-50">Alarm Clock</h3>
+        <p class="text-sm text-slate-400">Set reliable alarms with 8 sounds. Never oversleep again.</p>
+      </a>
+
+      <a href="/timer/" class="card group block text-center transition-transform hover:-translate-y-1">
+        <div class="mb-3 text-4xl">&#9203;</div>
+        <h3 class="mb-2 font-display text-lg font-semibold text-slate-50">Timer</h3>
+        <p class="text-sm text-slate-400">Countdown timer for cooking, studying, workouts, and more.</p>
+      </a>
+
+      <a href="/stopwatch/" class="card group block text-center transition-transform hover:-translate-y-1">
+        <div class="mb-3 text-4xl">&#9201;</div>
+        <h3 class="mb-2 font-display text-lg font-semibold text-slate-50">Stopwatch</h3>
+        <p class="text-sm text-slate-400">Precise stopwatch with lap times. Track every second.</p>
+      </a>
+
+      <a href="/pomodoro-timer/" class="card group block text-center transition-transform hover:-translate-y-1">
+        <div class="mb-3 text-4xl">&#127813;</div>
+        <h3 class="mb-2 font-display text-lg font-semibold text-slate-50">Pomodoro Timer</h3>
+        <p class="text-sm text-slate-400">Stay focused with 25/5 work-break cycles. Boost productivity.</p>
+      </a>
+    </div>
+  </section>
+
+  <AdUnit slot="mid" />
+
+  <!-- SEO Content -->
+  <SEOContent title="Your Go-To Online Time Tools">
+    <p>
+      NoMore5Mins is a free collection of browser-based time management tools designed to keep you on track.
+      Whether you need a dependable online alarm clock to wake you up, a countdown timer for your next meal prep,
+      a stopwatch for interval training, or a Pomodoro timer to power through deep work sessions, we have you covered.
+    </p>
+    <p>
+      Every tool runs directly in your browser with zero downloads, no account creation, and no hidden costs.
+      Our alarm clock supports multiple simultaneous alarms with eight distinct sounds, a fullscreen display for
+      bedside use, and snooze functionality for those mornings when you need just a little more time.
+      The countdown timer handles hours-long durations or quick egg-timer countdowns with equal ease.
+      The stopwatch offers lap tracking with automatic fastest/slowest markers.
+      And the Pomodoro timer follows the classic 25-minute focus / 5-minute break pattern trusted by millions.
+    </p>
+    <h3 class="mt-4 font-display text-lg font-semibold text-slate-50">Features at a Glance</h3>
+    <ul class="list-inside list-disc space-y-1">
+      <li>Multiple alarm sounds and volume control</li>
+      <li>Fullscreen clock display with auto-hiding cursor</li>
+      <li>Dark and light mode support</li>
+      <li>Mobile-friendly responsive design</li>
+      <li>Browser notifications for alarms and timers</li>
+      <li>Wake Lock API to prevent your screen from sleeping</li>
+      <li>LocalStorage persistence — your alarms survive page refreshes</li>
+      <li>No ads wall, no forced sign-ups, no data collection</li>
+    </ul>
+  </SEOContent>
+
+  <SEOContent title="Why NoMore5Mins?">
+    <p>
+      The name says it all. We have all been there — the alarm goes off, and we tell ourselves "just 5 more minutes."
+      Before we know it, we are scrambling out of bed 45 minutes late. NoMore5Mins was built to break that cycle.
+    </p>
+    <p>
+      Our alarm clock caps snooze attempts and reminds you that those extra minutes are not worth it.
+      The tools are intentionally simple, fast-loading, and distraction-free so you can set what you need and
+      get on with your day. NoMore5Mins is built for people who value their time and want tools that just work,
+      right in the browser, on any device.
+    </p>
+  </SEOContent>
+
+  <!-- FAQ Section -->
+  <FAQ items={faqItems} />
+
+  <AdUnit slot="footer" />
+</ToolLayout>
+
+<script>
+  import { padZero } from '../scripts/utils.js';
+  import { toggleFullscreen } from '../scripts/fullscreen.js';
+
+  const clockEl = document.getElementById('main-clock');
+  const ampmEl = document.getElementById('main-ampm');
+  const dateEl = document.getElementById('main-date');
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+  function updateClock() {
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes();
+    const s = now.getSeconds();
+
+    if (clockEl) {
+      const displayH = h % 12 || 12;
+      clockEl.textContent = `${padZero(displayH)}:${padZero(m)}:${padZero(s)}`;
+    }
+
+    if (ampmEl) {
+      ampmEl.textContent = h >= 12 ? 'PM' : 'AM';
+    }
+
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    }
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      toggleFullscreen();
+    });
+  }
+</script>

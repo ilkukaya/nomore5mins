@@ -1,0 +1,17 @@
+{
+  "name": "nomore5mins",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "NoMore5Mins - Free Online Alarm Clock, Timer & Stopwatch",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.3",
+    "tailwindcss": "^4.2.2"
+  }
+}
