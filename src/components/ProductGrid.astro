@@ -1,0 +1,33 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Product } from './ProductCard.astro';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  products: Product[];
+  columns?: 2 | 3;
+}
+
+const { title, subtitle, products, columns = 3 } = Astro.props;
+const gridCols = columns === 2
+  ? 'grid-cols-1 sm:grid-cols-2'
+  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+---
+
+<section class="mx-auto max-w-5xl px-4 py-8">
+  <div class="mb-6 text-center">
+    <h2 class="font-display text-2xl font-bold text-slate-50">{title}</h2>
+    {subtitle && <p class="mt-2 text-sm text-slate-400">{subtitle}</p>}
+  </div>
+
+  <div class={`grid gap-4 ${gridCols}`}>
+    {products.map((product) => (
+      <ProductCard product={product} />
+    ))}
+  </div>
+
+  <p class="mt-4 text-center text-xs text-slate-600">
+    As an Amazon Associate, NoMore5Mins earns from qualifying purchases. Prices may vary.
+  </p>
+</section>

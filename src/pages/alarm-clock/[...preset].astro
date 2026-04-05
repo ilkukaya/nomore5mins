@@ -6,6 +6,8 @@ import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
 import presets from '../../content/alarms/presets.json';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 export function getStaticPaths() {
   return presets.map((preset) => ({
@@ -165,6 +167,15 @@ const faqItems = [
         online alarm clock requires no downloads and works on any device with a browser.
       </p>
     </SEOContent>
+
+    <!-- Sleep Products -->
+    <div class="mx-auto max-w-4xl">
+      <ProductGrid
+        title="Wake Up Refreshed"
+        subtitle="Top-rated products to help you sleep better and wake up on time"
+        products={products.sleep.slice(0, 3)}
+      />
+    </div>
 
     <FAQ items={faqItems} />
 

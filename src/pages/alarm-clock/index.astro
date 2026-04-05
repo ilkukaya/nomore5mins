@@ -6,6 +6,8 @@ import FAQ from '../../components/FAQ.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import sounds from '../../data/sounds.json';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const breadcrumbItems = [
   { label: 'Home', href: '/' },
@@ -283,6 +285,13 @@ const faqItems = [
       <li>Set a backup alarm 5 minutes after your main one for extra peace of mind</li>
     </ul>
   </SEOContent>
+
+  <!-- Recommended Sleep Products -->
+  <ProductGrid
+    title="Sleep Better, Wake Up Easier"
+    subtitle="Hand-picked products to improve your sleep quality and morning routine"
+    products={products.sleep}
+  />
 
   <!-- FAQ -->
   <FAQ items={faqItems} />

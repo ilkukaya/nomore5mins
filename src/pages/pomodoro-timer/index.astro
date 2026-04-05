@@ -5,6 +5,8 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import SEOContent from '../../components/SEOContent.astro';
 import FAQ from '../../components/FAQ.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import products from '../../data/products.json';
 
 const faqItems = [
   {
@@ -156,6 +158,14 @@ const faqItems = [
         for administrative tasks.
       </p>
     </SEOContent>
+
+    <!-- Focus & Productivity Gear -->
+    <ProductGrid
+      title="Level Up Your Focus"
+      subtitle="Tools that help you stay in the zone during Pomodoro sessions"
+      products={products.productivity}
+      columns={2}
+    />
 
     <FAQ items={faqItems} />
 

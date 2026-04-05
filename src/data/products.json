@@ -1,0 +1,116 @@
+{
+  "sleep": [
+    {
+      "name": "Memory Foam Pillow",
+      "description": "Ergonomic cervical pillow for neck pain relief. Adjustable loft for side, back, and stomach sleepers.",
+      "price": "$35.99",
+      "category": "sleep",
+      "tag": "Best Seller",
+      "asin": "B09NNKTBVV",
+      "image": "pillow"
+    },
+    {
+      "name": "Silk Sleep Mask",
+      "description": "100% mulberry silk eye mask. Blocks all light for deeper sleep. Adjustable strap, ultra-soft.",
+      "price": "$12.99",
+      "category": "sleep",
+      "tag": "Top Rated",
+      "asin": "B07KC5DWCC",
+      "image": "mask"
+    },
+    {
+      "name": "White Noise Machine",
+      "description": "30 soothing sounds including fan, rain, and ocean. Timer settings from 30 min to 8 hours.",
+      "price": "$29.99",
+      "category": "sleep",
+      "tag": "Popular",
+      "asin": "B07WPTG3Y2",
+      "image": "noise"
+    },
+    {
+      "name": "Sunrise Alarm Clock",
+      "description": "Wake up naturally with simulated sunrise. Gradual light from 1% to 100% over 30 minutes.",
+      "price": "$39.99",
+      "category": "sleep",
+      "tag": "Editor's Pick",
+      "asin": "B0BKWX28SG",
+      "image": "sunrise"
+    },
+    {
+      "name": "Weighted Blanket (15 lbs)",
+      "description": "Glass bead weighted blanket for calming comfort. Breathable cotton cover, machine washable.",
+      "price": "$49.99",
+      "category": "sleep",
+      "tag": "Best Value",
+      "asin": "B073429DV2",
+      "image": "blanket"
+    },
+    {
+      "name": "Smart Sleep Tracker",
+      "description": "Under-mattress sleep sensor. Tracks sleep stages, heart rate, snoring. Pairs with app.",
+      "price": "$99.99",
+      "category": "sleep",
+      "tag": "Premium",
+      "asin": "B0C1LP2S8B",
+      "image": "tracker"
+    }
+  ],
+  "productivity": [
+    {
+      "name": "Noise Canceling Headphones",
+      "description": "Active noise cancellation for deep focus. 30-hour battery, comfortable for all-day wear.",
+      "price": "$79.99",
+      "category": "productivity",
+      "tag": "Best Seller",
+      "asin": "B0BX8M3Y26",
+      "image": "headphones"
+    },
+    {
+      "name": "Pomodoro Desk Timer",
+      "description": "Physical cube timer — flip to start. 5, 15, 25, or 45 minute presets. No phone distractions.",
+      "price": "$24.99",
+      "category": "productivity",
+      "tag": "Top Rated",
+      "asin": "B09GFPJKR5",
+      "image": "cubetimer"
+    },
+    {
+      "name": "Blue Light Blocking Glasses",
+      "description": "Reduce eye strain during long screen sessions. Lightweight frame, clear lenses with UV filter.",
+      "price": "$16.99",
+      "category": "productivity",
+      "tag": "Popular",
+      "asin": "B08GHX6VLJ",
+      "image": "glasses"
+    },
+    {
+      "name": "Standing Desk Converter",
+      "description": "Sit-stand desk riser with smooth height adjustment. Fits two monitors, keyboard tray included.",
+      "price": "$189.99",
+      "category": "productivity",
+      "tag": "Premium",
+      "asin": "B07HCGN7GD",
+      "image": "desk"
+    }
+  ],
+  "fitness": [
+    {
+      "name": "Fitness Tracker Watch",
+      "description": "Heart rate monitor, sleep tracking, 14-day battery. Multiple alarm vibrations to wake you up.",
+      "price": "$39.99",
+      "category": "fitness",
+      "tag": "Best Seller",
+      "asin": "B0CX5JYN2F",
+      "image": "fitwatch"
+    },
+    {
+      "name": "Yoga Mat (Extra Thick)",
+      "description": "6mm thick, non-slip surface. Perfect for morning stretching routines. Carrying strap included.",
+      "price": "$22.99",
+      "category": "fitness",
+      "tag": "Popular",
+      "asin": "B01LP0V09I",
+      "image": "yogamat"
+    }
+  ]
+}
