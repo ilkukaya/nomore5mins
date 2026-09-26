@@ -1,0 +1,97 @@
+---
+import Icon from '../Icon.astro';
+import SoundPicker from './SoundPicker.astro';
+import { fmt, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  /** "HH:MM" to pre-fill the picker (preset pages). */
+  presetTime?: string;
+}
+const { locale, presetTime } = Astro.props;
+const t = useTranslations(locale);
+const quick = [5, 10, 15, 20, 30, 60];
+---
+
+<div data-tool="alarm" data-i18n={JSON.stringify(t.client)} data-preset={presetTime}>
+  <div class="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+    <section class="stage relative flex min-h-[260px] flex-col items-center justify-center text-center md:min-h-[360px]" data-fs-target>
+      <button type="button" class="btn btn-ghost btn-icon absolute end-3 top-3" data-fullscreen aria-label={t.common.fullscreen} title={`${t.common.fullscreen} (F)`}>
+        <Icon name="expand" size={18} />
+      </button>
+      <div class="digits digits-xl" aria-live="off">
+        <span data-clock>--:--:--</span><span class="unit-sm" data-period></span>
+      </div>
+      <p class="mt-3 text-ink-2" data-date>&nbsp;</p>
+      <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-accent-soft px-4 py-2 font-semibold text-accent" data-next hidden>
+        <Icon name="bell" size={18} />
+        <span data-next-text></span>
+      </p>
+    </section>
+
+    <section class="panel p-5 sm:p-6" aria-labelledby="alarm-new-title">
+      <h2 id="alarm-new-title" class="mb-4 text-lg font-bold">{t.alarm.setTitle}</h2>
+      <label class="field-label" for="alarm-time">{t.alarm.timeLabel}</label>
+      <input id="alarm-time" type="time" class="input time-input" value={presetTime || '07:00'} required data-time />
+
+      <p class="field-label mt-4">{t.alarm.quickTitle}</p>
+      <div class="scrollbar-none -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+        {quick.map((n) => <button type="button" class="chip" data-quick={n}>{fmt(t.alarm.inMinutes, { n })}</button>)}
+      </div>
+
+      <div class="mt-4">
+        <label class="field-label" for="alarm-label">{t.alarm.labelLabel}</label>
+        <input id="alarm-label" type="text" class="input" maxlength="40" placeholder={t.alarm.labelPlaceholder} data-label />
+      </div>
+
+      <div class="mt-4">
+        <SoundPicker locale={locale} id="alarm" />
+      </div>
+
+      <button type="button" class="btn btn-primary btn-lg btn-block mt-5" data-set>
+        <Icon name="bell" />
+        {t.alarm.setCta}
+      </button>
+      <p class="mt-3 text-center text-xs text-ink-3">{t.common.keepOpen}</p>
+    </section>
+  </div>
+
+  <section class="panel mt-4 p-5 sm:p-6" aria-labelledby="alarm-list-title" data-list-section hidden>
+    <h2 id="alarm-list-title" class="mb-2 text-lg font-bold">{t.alarm.listTitle}</h2>
+    <ul class="divide-y divide-line" data-list></ul>
+  </section>
+
+  <button
+    type="button"
+    class="btn btn-ink fixed inset-x-4 bottom-[calc(76px+env(safe-area-inset-bottom))] z-50 mx-auto max-w-md shadow-lg md:bottom-6"
+    data-unlock
+    hidden
+  >
+    <Icon name="volume" />
+    <span>{t.client.enableSound}</span>
+  </button>
+
+  <div class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="ring-title" data-ringing>
+    <div class="w-full max-w-sm text-center">
+      <div class="shake mx-auto mb-4 grid h-24 w-24 place-items-center rounded-full bg-accent text-accent-ink">
+        <Icon name="bell" size={48} />
+      </div>
+      <h2 id="ring-title" class="h-display">{t.client.wakeUp}</h2>
+      <p class="mt-2 text-lg text-ink-2" data-ring-label></p>
+      <p class="digits digits-md mt-4" data-ring-time></p>
+      <p class="mt-4 font-semibold text-danger" data-snooze-limit hidden>{t.client.snoozeLimit}</p>
+      <div class="mt-8 grid gap-3">
+        <button type="button" class="btn btn-primary btn-lg btn-block" data-stop>{t.common.stop}</button>
+        <button type="button" class="btn btn-ghost btn-block" data-snooze>
+          <span>{t.client.snooze}</span>
+          <span class="text-sm font-normal text-ink-3" data-snooze-left></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initAlarm } from '../../scripts/tools/alarm';
+  document.querySelectorAll<HTMLElement>('[data-tool="alarm"]').forEach(initAlarm);
+</script>

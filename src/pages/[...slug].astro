@@ -1,0 +1,361 @@
+---
+/**
+ * Generates every tool page in every language:
+ *   /                     /tr/
+ *   /alarm-clock/         /tr/alarm-clock/        (+ 73 alarm presets)
+ *   /timer/               /tr/timer/              (+ 26 timer presets)
+ *   /stopwatch/ /pomodoro-timer/ /clock/ /world-clock/ /sleep-calculator/
+ */
+import ToolPage from '../components/ToolPage.astro';
+import HomeView from '../views/HomeView.astro';
+import PresetLinks from '../views/PresetLinks.astro';
+import AlarmTool from '../components/tools/AlarmTool.astro';
+import TimerTool from '../components/tools/TimerTool.astro';
+import StopwatchTool from '../components/tools/StopwatchTool.astro';
+import PomodoroTool from '../components/tools/PomodoroTool.astro';
+import ClockTool from '../components/tools/ClockTool.astro';
+import WorldClockTool from '../components/tools/WorldClockTool.astro';
+import SleepTool from '../components/tools/SleepTool.astro';
+import { ACTIVE_LOCALES, DEFAULT_LOCALE, fmt, formatClock, formatDurationShort, localizePath, useTranslations, type Locale } from '../i18n';
+import {
+  ALARM_PRESETS,
+  TIMER_PRESETS,
+  TOOL_PATHS,
+  alarmBand,
+  alarmLabel,
+  alarmPresetPath,
+  timerBand,
+  timerLabel,
+  timerPresetPath,
+  type AlarmPreset,
+  type TimerPreset,
+  type ToolKey,
+} from '../lib/routes';
+
+type Page =
+  | { kind: 'home' }
+  | { kind: 'tool'; tool: ToolKey }
+  | { kind: 'alarmPreset'; preset: AlarmPreset }
+  | { kind: 'timerPreset'; preset: TimerPreset };
+
+export function getStaticPaths() {
+  const pages: { path: string; page: Page }[] = [
+    { path: '/', page: { kind: 'home' } },
+    ...(Object.keys(TOOL_PATHS) as ToolKey[]).map((tool) => ({ path: TOOL_PATHS[tool], page: { kind: 'tool', tool } as Page })),
+    ...ALARM_PRESETS.map((preset) => ({ path: alarmPresetPath(preset), page: { kind: 'alarmPreset', preset } as Page })),
+    ...TIMER_PRESETS.map((preset) => ({ path: timerPresetPath(preset), page: { kind: 'timerPreset', preset } as Page })),
+  ];
+  return ACTIVE_LOCALES.flatMap((locale) =>
+    pages.map(({ path, page }) => {
+      const full = localizePath(locale, path).replace(/^\/|\/$/g, '');
+      return { params: { slug: full || undefined }, props: { locale, path, page } };
+    }),
+  );
+}
+
+interface Props {
+  locale: Locale;
+  path: string;
+  page: Page;
+}
+
+const { locale, path, page } = Astro.props;
+const t = useTranslations(locale);
+const L = (p: string) => localizePath(locale, p);
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// ---------- Alarm preset data ----------
+let alarm: null | {
+  time: string;
+  band: ReturnType<typeof alarmBand>;
+  bedtimes: { cycles: number; time: string; hours: string; recommended: boolean }[];
+  showBedtimes: boolean;
+  nearby: { href: string; label: string; current?: boolean }[];
+} = null;
+if (page.kind === 'alarmPreset') {
+  const p = page.preset;
+  const wake = p.hour * 60 + p.minute;
+  const bedtimes = [6, 5, 4].map((cycles) => {
+    const minutes = (((wake - cycles * 90 - 15) % 1440) + 1440) % 1440;
+    return {
+      cycles,
+      time: formatClock(locale, Math.floor(minutes / 60), minutes % 60),
+      hours: formatDurationShort(locale, cycles * 90),
+      recommended: cycles >= 5,
+    };
+  });
+  const index = ALARM_PRESETS.indexOf(p);
+  const start = Math.max(0, Math.min(ALARM_PRESETS.length - 16, index - 8));
+  alarm = {
+    time: alarmLabel(locale, p),
+    band: alarmBand(p.hour),
+    bedtimes,
+    showBedtimes: p.hour >= 3 && p.hour <= 12,
+    nearby: ALARM_PRESETS.slice(start, start + 16).map((x) => ({
+      href: L(alarmPresetPath(x)),
+      label: alarmLabel(locale, x),
+      current: x === p,
+    })),
+  };
+}
+
+const allAlarmLinks = ALARM_PRESETS.map((x) => ({ href: L(alarmPresetPath(x)), label: alarmLabel(locale, x) }));
+const allTimerLinks = (current?: TimerPreset) =>
+  TIMER_PRESETS.map((x) => ({
+    href: L(timerPresetPath(x)),
+    label: fmt(t.timerPreset.h1, { duration: timerLabel(locale, x, true) }),
+    current: x === current,
+  }));
+---
+
+{page.kind === 'home' && <HomeView locale={locale} />}
+
+{
+  page.kind === 'tool' && page.tool === 'alarm' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="alarm"
+      metaTitle={t.alarm.metaTitle}
+      metaDescription={t.alarm.metaDescription}
+      h1={t.alarm.h1}
+      lead={t.alarm.lead}
+      steps={t.alarm.steps}
+      facts={t.alarm.facts}
+      contentTitle={t.alarm.contentTitle}
+      content={t.alarm.content}
+      faq={t.alarm.faq}
+      shelf="sleep"
+    >
+      <AlarmTool locale={locale} />
+      <PresetLinks slot="presets" title={t.alarmPreset.otherTimes} links={allAlarmLinks} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'alarmPreset' && alarm && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="alarm"
+      crumb={alarm.time}
+      metaTitle={fmt(t.alarmPreset.metaTitle, { time: alarm.time })}
+      metaDescription={fmt(t.alarmPreset.metaDescription, { time: alarm.time })}
+      h1={fmt(t.alarmPreset.h1, { time: alarm.time })}
+      lead={fmt(t.alarmPreset.lead, { time: alarm.time })}
+      steps={t.alarm.steps}
+      facts={t.alarm.facts}
+      contentTitle={fmt(t.alarmPreset.usesTitle, { time: alarm.time })}
+      faq={t.alarmPreset.faq.map((f) => ({
+        q: fmt(f.q, { time: alarm!.time }),
+        a: fmt(f.a, { time: alarm!.time, bedtime: alarm!.bedtimes[1].time }),
+      }))}
+      shelf="sleep"
+    >
+      <AlarmTool locale={locale} presetTime={`${pad(page.preset.hour)}:${pad(page.preset.minute)}`} />
+
+      <div slot="after-tool" class="space-y-14">
+        {alarm.showBedtimes && (
+          <section aria-labelledby="bed-title">
+            <h2 id="bed-title" class="h-section">{fmt(t.alarmPreset.bedtimeTitle, { time: alarm.time })}</h2>
+            <p class="mt-2 text-ink-2">{t.alarmPreset.bedtimeLead}</p>
+            <ul class="mt-5 grid gap-3 sm:grid-cols-3">
+              {alarm.bedtimes.map((b) => (
+                <li class:list={['panel-flat p-4', b.recommended && 'border-accent']}>
+                  <p class="digits text-3xl font-light">{b.time}</p>
+                  <p class="mt-1 text-sm text-ink-3">{fmt(t.alarmPreset.cycleLine, { n: b.cycles, hours: b.hours })}</p>
+                  {b.recommended && <p class="mt-2 text-xs font-bold uppercase tracking-wide text-accent">{t.alarmPreset.recommended}</p>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        <section class="prose max-w-none">
+          <h2 style="margin-top:0">{fmt(t.alarmPreset.usesTitle, { time: alarm.time })}</h2>
+          <p>{fmt(t.alarmPreset.bands[alarm.band].intro, { time: alarm.time })}</p>
+          <ul>
+            {t.alarmPreset.bands[alarm.band].uses.map((u) => <li>{u}</li>)}
+          </ul>
+        </section>
+      </div>
+
+      <PresetLinks slot="presets" title={t.alarmPreset.otherTimes} links={alarm.nearby} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'tool' && page.tool === 'timer' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="timer"
+      metaTitle={t.timer.metaTitle}
+      metaDescription={t.timer.metaDescription}
+      h1={t.timer.h1}
+      lead={t.timer.lead}
+      steps={t.timer.steps}
+      facts={t.timer.facts}
+      contentTitle={t.timer.contentTitle}
+      content={t.timer.content}
+      faq={t.timer.faq}
+      shelf="focus"
+    >
+      <TimerTool locale={locale} />
+      <PresetLinks slot="presets" title={t.timerPreset.otherTimers} links={allTimerLinks()} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'timerPreset' &&
+    (() => {
+      const p = page.preset;
+      const label = timerLabel(locale, p);
+      const title = timerLabel(locale, p, true);
+      const band = timerBand(p.seconds);
+      const uses = locale === DEFAULT_LOCALE ? p.useCases : t.timerPreset.bands[band].uses;
+      return (
+        <ToolPage
+          locale={locale}
+          path={path}
+          tool="timer"
+          crumb={fmt(t.timerPreset.h1, { duration: title })}
+          metaTitle={fmt(t.timerPreset.metaTitle, { duration: title })}
+          metaDescription={fmt(t.timerPreset.metaDescription, { duration: label })}
+          h1={fmt(t.timerPreset.h1, { duration: title })}
+          lead={fmt(t.timerPreset.lead, { duration: label })}
+          steps={t.timer.steps}
+          facts={t.timer.facts}
+          faq={t.timerPreset.faq.map((f) => ({ q: fmt(f.q, { duration: label }), a: fmt(f.a, { duration: label }) }))}
+          shelf="focus"
+        >
+          <TimerTool locale={locale} seconds={p.seconds} />
+          <section slot="after-tool" class="prose max-w-none">
+            <h2 style="margin-top:0">{fmt(t.timerPreset.usesTitle, { duration: label })}</h2>
+            <p>{fmt(t.timerPreset.bands[band].intro, { duration: label })}</p>
+            <ul>
+              {uses.map((u) => (
+                <li>{u}</li>
+              ))}
+            </ul>
+          </section>
+          <PresetLinks slot="presets" title={t.timerPreset.otherTimers} links={allTimerLinks(p)} />
+        </ToolPage>
+      );
+    })()
+}
+
+{
+  page.kind === 'tool' && page.tool === 'stopwatch' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="stopwatch"
+      metaTitle={t.stopwatch.metaTitle}
+      metaDescription={t.stopwatch.metaDescription}
+      h1={t.stopwatch.h1}
+      lead={t.stopwatch.lead}
+      steps={t.stopwatch.steps}
+      facts={t.stopwatch.facts}
+      contentTitle={t.stopwatch.contentTitle}
+      content={t.stopwatch.content}
+      faq={t.stopwatch.faq}
+      shelf="focus"
+    >
+      <StopwatchTool locale={locale} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'tool' && page.tool === 'pomodoro' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="pomodoro"
+      metaTitle={t.pomodoro.metaTitle}
+      metaDescription={t.pomodoro.metaDescription}
+      h1={t.pomodoro.h1}
+      lead={t.pomodoro.lead}
+      steps={t.pomodoro.steps}
+      facts={t.pomodoro.facts}
+      contentTitle={t.pomodoro.contentTitle}
+      content={t.pomodoro.content}
+      faq={t.pomodoro.faq}
+      shelf="focus"
+    >
+      <PomodoroTool locale={locale} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'tool' && page.tool === 'clock' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="clock"
+      metaTitle={t.clock.metaTitle}
+      metaDescription={t.clock.metaDescription}
+      h1={t.clock.h1}
+      lead={t.clock.lead}
+      facts={t.clock.facts}
+      contentTitle={t.clock.contentTitle}
+      content={t.clock.content}
+      faq={t.clock.faq}
+      shelf="sleep"
+    >
+      <ClockTool locale={locale} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'tool' && page.tool === 'worldClock' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="worldClock"
+      metaTitle={t.worldClock.metaTitle}
+      metaDescription={t.worldClock.metaDescription}
+      h1={t.worldClock.h1}
+      lead={t.worldClock.lead}
+      facts={t.worldClock.facts}
+      contentTitle={t.worldClock.contentTitle}
+      content={t.worldClock.content}
+      faq={t.worldClock.faq}
+      shelf="focus"
+    >
+      <WorldClockTool locale={locale} />
+    </ToolPage>
+  )
+}
+
+{
+  page.kind === 'tool' && page.tool === 'sleep' && (
+    <ToolPage
+      locale={locale}
+      path={path}
+      tool="sleep"
+      metaTitle={t.sleep.metaTitle}
+      metaDescription={t.sleep.metaDescription}
+      h1={t.sleep.h1}
+      lead={t.sleep.lead}
+      steps={t.sleep.steps}
+      facts={t.sleep.facts}
+      contentTitle={t.sleep.contentTitle}
+      content={t.sleep.content}
+      faq={t.sleep.faq}
+      shelf="sleep"
+    >
+      <SleepTool locale={locale} />
+      <PresetLinks
+        slot="presets"
+        title={t.alarmPreset.otherTimes}
+        links={allAlarmLinks.filter((_, i) => i < 24)}
+      />
+    </ToolPage>
+  )
+}

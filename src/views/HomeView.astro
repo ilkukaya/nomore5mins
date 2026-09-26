@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import AdSlot from '../components/AdSlot.astro';
+import ProductShelf from '../components/ProductShelf.astro';
+import PresetLinks from './PresetLinks.astro';
+import { LOCALES, absoluteUrl, fmt, localizePath, useTranslations, type Locale } from '../i18n';
+import {
+  TOOL_ICONS,
+  TOOL_ORDER,
+  TOOL_PATHS,
+  alarmLabel,
+  alarmPresetPath,
+  popularAlarms,
+  popularTimers,
+  timerLabel,
+  timerPresetPath,
+} from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const L = (p: string) => localizePath(locale, p);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: t.home.toolsTitle,
+    itemListElement: TOOL_ORDER.map((key, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: t.tools[key],
+      url: absoluteUrl(L(TOOL_PATHS[key])),
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: LOCALES[locale].hreflang,
+    mainEntity: t.home.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout locale={locale} title={t.home.metaTitle} description={t.home.metaDescription} path="/" jsonLd={jsonLd}>
+  <section class="container-page pt-8 md:pt-14">
+    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <div>
+        <h1 class="h-display max-w-xl">{t.home.h1}</h1>
+        <p class="lead mt-4 max-w-lg">{t.home.lead}</p>
+        <form class="panel mt-7 max-w-lg p-4 sm:p-5" action={L('/alarm-clock/')} method="get" data-quick-alarm>
+          <label class="field-label" for="home-alarm">{t.home.quickTitle}</label>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <input id="home-alarm" name="t" type="time" value="07:00" required class="input time-input !min-h-16 !text-4xl sm:flex-1" />
+            <button type="submit" class="btn btn-primary btn-lg">
+              <Icon name="bell" />
+              {t.home.quickCta}
+            </button>
+          </div>
+          <p class="mt-2 text-xs text-ink-3">{t.home.quickHint}</p>
+        </form>
+      </div>
+      <div class="stage hidden flex-col items-center justify-center text-center lg:flex lg:min-h-[340px]">
+        <div class="digits digits-lg"><span data-home-clock>--:--</span><span class="unit-sm" data-home-period></span></div>
+        <p class="mt-3 text-ink-2" data-home-date>&nbsp;</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-14" aria-labelledby="tools-title">
+    <h2 id="tools-title" class="h-section mb-5">{t.home.toolsTitle}</h2>
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        TOOL_ORDER.map((key, i) => (
+          <li class:list={[i === 0 && 'lg:col-span-2 lg:row-span-1']}>
+            <a
+              href={L(TOOL_PATHS[key])}
+              class="panel group flex h-full items-start gap-4 p-5 transition-colors hover:border-line-strong"
+            >
+              <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-surface-2 text-ink transition-colors group-hover:bg-accent group-hover:text-accent-ink">
+                <Icon name={TOOL_ICONS[key]} size={24} />
+              </span>
+              <span>
+                <span class="block font-bold">{t.tools[key]}</span>
+                <span class="mt-1 block text-sm text-ink-3">{t.toolBlurbs[key]}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <div class="container-page">
+    <AdSlot placement="top" />
+  </div>
+
+  <div class="container-page mt-14 grid gap-12 lg:grid-cols-2">
+    <PresetLinks
+      title={t.home.popularAlarms}
+      links={popularAlarms().map((p) => ({ href: L(alarmPresetPath(p)), label: alarmLabel(locale, p) }))}
+    />
+    <PresetLinks
+      title={t.home.popularTimers}
+      links={popularTimers().map((p) => ({ href: L(timerPresetPath(p)), label: fmt(t.timerPreset.h1, { duration: timerLabel(locale, p, true) }) }))}
+    />
+  </div>
+
+  <section class="container-page mt-16" aria-labelledby="why-title">
+    <h2 id="why-title" class="h-section mb-5">{t.home.whyTitle}</h2>
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        t.home.why.map((item) => (
+          <li class="panel-flat p-5">
+            <p class="font-bold">{item.title}</p>
+            <p class="mt-1.5 text-[0.9375rem] text-ink-2">{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <div class="container-page mt-16 space-y-16">
+    <ProductShelf locale={locale} group="sleep" />
+    <div class="max-w-3xl">
+      <Faq title={t.common.faqTitle} items={t.home.faq} />
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { clockParts, longDate, uses12h } from '../scripts/lib/time';
+  const clock = document.querySelector<HTMLElement>('[data-home-clock]');
+  const period = document.querySelector<HTMLElement>('[data-home-period]');
+  const date = document.querySelector<HTMLElement>('[data-home-date]');
+  const twelve = uses12h();
+  const tick = () => {
+    const now = new Date();
+    const parts = clockParts(now, { hour12: twelve });
+    if (clock) clock.textContent = parts.main;
+    if (period) period.textContent = parts.period;
+    if (date) date.textContent = longDate(now);
+  };
+  tick();
+  setInterval(tick, 1000);
+  const input = document.querySelector<HTMLInputElement>('#home-alarm');
+  if (input) {
+    // Default the quick alarm to the next full hour + 1.
+    const next = new Date(Date.now() + 60 * 60 * 1000);
+    try {
+      const saved = JSON.parse(localStorage.getItem('nm5-sleep') || '{}');
+      input.value = saved.wake || `${String(next.getHours()).padStart(2, '0')}:00`;
+    } catch {
+      input.value = `${String(next.getHours()).padStart(2, '0')}:00`;
+    }
+  }
+</script>

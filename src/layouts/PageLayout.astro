@@ -1,0 +1,33 @@
+---
+/** English-only static pages (about, legal, contact, blog). */
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  h1: string;
+  intro?: string;
+  crumbs?: { label: string; href: string }[];
+  jsonLd?: object[];
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+const { title, description, path, h1, intro, crumbs, jsonLd, ogType, noindex } = Astro.props;
+---
+
+<BaseLayout locale="en" title={title} description={description} path={path} translated={false} jsonLd={jsonLd} ogType={ogType} noindex={noindex}>
+  <div class="container-narrow pt-6 md:pt-10">
+    {crumbs && <Breadcrumbs items={crumbs} />}
+    <header class="mb-8 mt-3">
+      <h1 class="h-display">{h1}</h1>
+      {intro && <p class="lead mt-4">{intro}</p>}
+      <slot name="meta" />
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+    <slot name="after" />
+  </div>
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2 font-bold tracking-tight', className]} dir="ltr">
+  <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" class="flex-none">
+    <rect width="32" height="32" rx="9" fill="var(--ink)"></rect>
+    <text
+      x="16"
+      y="22.5"
+      text-anchor="middle"
+      font-family="ui-sans-serif, system-ui, sans-serif"
+      font-size="19"
+      font-weight="700"
+      fill="var(--bg)">5</text
+    >
+    <path d="M7.5 21.5 24.5 10.5" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"></path>
+  </svg>
+  <span class="text-[1.075rem] leading-none">NoMore<span class="text-accent">5</span>Mins</span>
+</span>

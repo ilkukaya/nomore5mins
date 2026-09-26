@@ -1,0 +1,10 @@
+# Old / mistyped URLs (works on Netlify and Cloudflare Pages).
+/pomodoro                          /pomodoro-timer/                          301
+/pomodoro/                         /pomodoro-timer/                          301
+/privacy                           /privacy-policy/                          301
+/privacy/                          /privacy-policy/                          301
+/terms                             /terms-of-service/                        301
+/terms/                            /terms-of-service/                        301
+/alarm-clock/set-alarm-for-6am/    /alarm-clock/set-alarm-for-6-am/          301
+/set-alarm/*                       /alarm-clock/set-alarm-:splat             301
+/manifest.json                     /manifest.webmanifest                     301

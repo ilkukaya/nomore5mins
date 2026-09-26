@@ -1,0 +1,120 @@
+---
+import Icon from '../Icon.astro';
+import { localizePath, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div
+  data-tool="sleep"
+  data-i18n={JSON.stringify(t.client)}
+  data-alarm-url={localizePath(locale, '/alarm-clock/')}
+  data-titles={JSON.stringify({ bed: t.sleep.bedtimesTitle, wake: t.sleep.waketimesTitle })}
+>
+  <div class="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
+    <section class="panel p-5 sm:p-6">
+      <div class="segmented flex w-full" role="group">
+        <button type="button" class="flex-1 !whitespace-normal py-1.5 text-sm leading-tight" data-mode="wake" aria-pressed="true">{t.sleep.modeWake}</button>
+        <button type="button" class="flex-1 !whitespace-normal py-1.5 text-sm leading-tight" data-mode="now" aria-pressed="false">{t.sleep.modeNow}</button>
+      </div>
+      <div class="mt-5" data-wake-field>
+        <label class="field-label" for="sleep-wake">{t.sleep.modeWake}</label>
+        <input id="sleep-wake" type="time" class="input time-input" value="07:00" data-wake />
+      </div>
+      <div class="mt-4">
+        <label class="field-label" for="sleep-latency">{t.sleep.fallAsleep}</label>
+        <select id="sleep-latency" class="select" data-latency>
+          {[5, 10, 15, 20, 30, 45].map((m) => <option value={m} selected={m === 15}>{m}</option>)}
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary btn-lg btn-block mt-5" data-calc>
+        <Icon name="moon" />
+        {t.sleep.calculate}
+      </button>
+    </section>
+
+    <section class="stage !p-5 sm:!p-6" aria-live="polite">
+      <h2 class="mb-4 text-lg font-bold" data-results-title>{t.sleep.bedtimesTitle}</h2>
+      <ol class="grid gap-2 sm:grid-cols-2" data-results></ol>
+    </section>
+  </div>
+</div>
+
+<script>
+  import { fmt, readStrings } from '../../scripts/lib/i18n';
+  import { humanDuration, parseTimeValue, shortTime, toTimeValue } from '../../scripts/lib/time';
+  import { storage } from '../../scripts/lib/storage';
+
+  const CYCLE = 90;
+
+  document.querySelectorAll<HTMLElement>('[data-tool="sleep"]').forEach((root) => {
+    const s = readStrings(root);
+    const titles = JSON.parse(root.dataset.titles!);
+    const wake = root.querySelector<HTMLInputElement>('[data-wake]')!;
+    const latency = root.querySelector<HTMLSelectElement>('[data-latency]')!;
+    const list = root.querySelector<HTMLElement>('[data-results]')!;
+    const title = root.querySelector<HTMLElement>('[data-results-title]')!;
+    let mode: 'wake' | 'now' = 'wake';
+
+    const saved = storage.getJSON<{ wake?: string; latency?: string }>('nm5-sleep', {});
+    if (saved.wake) wake.value = saved.wake;
+    if (saved.latency) latency.value = saved.latency;
+
+    function item(time: Date, cycles: number, withAlarm: boolean) {
+      const li = document.createElement('li');
+      const best = cycles === 5 || cycles === 6;
+      li.className = `panel-flat flex items-center gap-3 p-4 ${best ? 'border-accent' : ''}`;
+      const hours = humanDuration(cycles * CYCLE * 60);
+      li.innerHTML = `
+        <div class="min-w-0 flex-1">
+          <p class="digits text-3xl font-light">${shortTime(time)}</p>
+          <p class="mt-1 text-sm text-ink-3">${fmt(s.cycles, { n: cycles })} · ${fmt(s.sleepHours, { h: hours })}</p>
+        </div>
+        ${best ? `<span class="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-bold text-accent">${s.best}</span>` : ''}`;
+      if (withAlarm) {
+        const a = document.createElement('a');
+        a.className = 'btn btn-ghost min-h-10 px-3 text-sm';
+        a.href = `${root.dataset.alarmUrl}?t=${toTimeValue(time)}`;
+        a.textContent = s.setAlarmAt;
+        li.append(a);
+      }
+      return li;
+    }
+
+    function calculate() {
+      const lat = Number(latency.value);
+      storage.setJSON('nm5-sleep', { wake: wake.value, latency: latency.value });
+      const items: HTMLElement[] = [];
+      if (mode === 'wake') {
+        const tv = parseTimeValue(wake.value);
+        if (!tv) return;
+        const target = new Date();
+        target.setHours(tv.hour, tv.minute, 0, 0);
+        for (const cycles of [6, 5, 4, 3]) items.push(item(new Date(target.getTime() - (cycles * CYCLE + lat) * 60000), cycles, false));
+        title.textContent = titles.bed;
+      } else {
+        const now = Date.now();
+        for (const cycles of [3, 4, 5, 6]) items.push(item(new Date(now + (cycles * CYCLE + lat) * 60000), cycles, true));
+        title.textContent = titles.wake;
+      }
+      list.replaceChildren(...items);
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        mode = btn.dataset.mode as 'wake' | 'now';
+        root.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        root.querySelector<HTMLElement>('[data-wake-field]')!.hidden = mode === 'now';
+        calculate();
+      }),
+    );
+    root.querySelector('[data-calc]')!.addEventListener('click', calculate);
+    wake.addEventListener('change', calculate);
+    latency.addEventListener('change', calculate);
+    calculate();
+  });
+</script>

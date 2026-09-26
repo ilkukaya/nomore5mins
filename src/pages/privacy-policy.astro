@@ -1,167 +1,89 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 ---
 
-<BaseLayout
+<PageLayout
   title="Privacy Policy | NoMore5Mins"
-  description="Privacy Policy for NoMore5Mins. Learn how we handle your data, what we collect, and how we protect your privacy."
+  description="How NoMore5Mins handles data: local browser storage for your tools, cookies used by advertising and analytics partners, and your choices."
+  path="/privacy-policy/"
+  h1="Privacy policy"
+  intro="Last updated: 26 September 2026"
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacy policy', href: '/privacy-policy/' }]}
 >
-  <Header />
+  <p>
+    This policy explains what information is processed when you use NoMore5Mins (the “site”), why, and what choices
+    you have. The short version: your alarms, timers and settings never leave your device; our advertising and
+    analytics partners may use cookies as described below.
+  </p>
 
-  <main class="mx-auto max-w-3xl px-4 py-16">
-    <h1 class="font-display text-4xl font-bold text-slate-50 sm:text-5xl">
-      Privacy Policy
-    </h1>
-    <p class="mt-4 text-slate-400 dark-muted">Last updated: April 2026</p>
+  <h2>1. Data stored on your device</h2>
+  <p>
+    The tools save your alarms, timer durations, Pomodoro settings and statistics, world-clock cities, theme and
+    language preference in your browser’s <strong>local storage</strong>. This data stays on your device, is not sent
+    to us and can be deleted at any time by clearing your browser’s site data.
+  </p>
 
-    <div class="mt-10 space-y-10 text-lg leading-relaxed text-slate-400 dark-muted">
+  <h2>2. Information we do not collect</h2>
+  <p>
+    We do not offer accounts and we do not ask for your name, email address or other personal details to use the
+    tools. The optional contact form only receives what you choose to type into it.
+  </p>
 
-      <section>
-        <p>
-          At NoMore5Mins, we take your privacy seriously. This Privacy Policy explains what information
-          we collect, how we use it, and what choices you have. We believe in transparency and
-          keeping things simple &mdash; just like our tools.
-        </p>
-      </section>
+  <h2>3. Advertising (Google AdSense)</h2>
+  <p>
+    We use Google AdSense to show ads. Google and its partners use cookies and similar technologies to serve ads based
+    on your prior visits to this and other websites, to limit how often you see an ad and to measure ad performance.
+  </p>
+  <ul>
+    <li>Google’s use of advertising cookies enables it and its partners to serve ads based on your visits to this site and/or other sites on the internet.</li>
+    <li>You can opt out of personalised advertising in <a href="https://adssettings.google.com" rel="nofollow noopener">Google Ads Settings</a>, or opt out of some third-party vendors’ use of cookies at <a href="https://www.aboutads.info/choices/" rel="nofollow noopener">aboutads.info</a> and <a href="https://www.youronlinechoices.eu/" rel="nofollow noopener">youronlinechoices.eu</a>.</li>
+    <li>Learn more in <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener">How Google uses information from sites that use its services</a>.</li>
+  </ul>
+  <p>
+    Visitors in the European Economic Area, the United Kingdom and Switzerland are asked for consent through a
+    Google-certified consent management platform before personalised ads or non-essential cookies are used. You can
+    change your choice at any time via the privacy settings link shown by that platform.
+  </p>
 
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Information We Collect</h2>
-        <p class="mt-4">
-          NoMore5Mins is designed to work without requiring any personal information from you.
-          We do not ask you to create an account, provide your name, or share your email address
-          to use our tools.
-        </p>
-        <h3 class="mt-6 font-display text-xl font-semibold text-slate-50 dark-text">Information Collected Automatically</h3>
-        <p class="mt-3">
-          When you visit our site, certain information is collected automatically through analytics
-          and advertising services:
-        </p>
-        <ul class="mt-3 list-disc space-y-2 pl-6">
-          <li>Browser type and version</li>
-          <li>Operating system</li>
-          <li>Pages visited and time spent on each page</li>
-          <li>Referring website or source</li>
-          <li>General geographic location (country/region level)</li>
-          <li>Device type (desktop, mobile, tablet)</li>
-          <li>Screen resolution</li>
-        </ul>
+  <h2>4. Analytics</h2>
+  <p>
+    We may use privacy-friendly analytics (such as Cloudflare Web Analytics, which does not use cookies) and/or
+    Google Analytics 4 to understand which tools are used and to fix problems. Analytics data is aggregated; IP
+    addresses are not used to identify you. Where consent is required, Google Analytics only runs after you give it.
+  </p>
 
-        <h3 class="mt-6 font-display text-xl font-semibold text-slate-50 dark-text">Information Stored Locally on Your Device</h3>
-        <p class="mt-3">
-          NoMore5Mins uses your browser's <strong class="text-slate-50 dark-text">localStorage</strong> to save
-          your preferences and settings. This data never leaves your device and is not transmitted
-          to our servers. Locally stored data includes:
-        </p>
-        <ul class="mt-3 list-disc space-y-2 pl-6">
-          <li>Theme preference (dark or light mode)</li>
-          <li>Alarm settings (times, labels, sounds)</li>
-          <li>Timer and Pomodoro preferences</li>
-          <li>World clock timezone selections</li>
-        </ul>
-        <p class="mt-3">
-          You can clear this data at any time by clearing your browser's site data for NoMore5Mins.
-        </p>
-      </section>
+  <h2>5. Affiliate links</h2>
+  <p>
+    NoMore5Mins is a participant in the Amazon Services LLC Associates Program and other Amazon affiliate programs,
+    advertising programs designed to provide a means for sites to earn fees by linking to Amazon. When you click an
+    Amazon link, Amazon may set cookies to attribute a purchase to us. We do not receive any information about you or
+    your purchases.
+  </p>
 
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">How We Use Information</h2>
-        <p class="mt-4">
-          The limited information we collect is used to:
-        </p>
-        <ul class="mt-3 list-disc space-y-2 pl-6">
-          <li>Understand how visitors use our tools so we can improve them</li>
-          <li>Monitor site performance and fix technical issues</li>
-          <li>Display relevant advertisements to support the free service</li>
-          <li>Analyze traffic trends and usage patterns in aggregate</li>
-        </ul>
-        <p class="mt-4">
-          We do not sell your personal information. We do not build user profiles. We do not
-          track you across other websites.
-        </p>
-      </section>
+  <h2>6. Notifications, sound and screen wake lock</h2>
+  <p>
+    If you allow notifications, alarms and timers can show a system notification. Permission is handled entirely by
+    your browser and no notification data is sent to us. The screen wake lock only keeps your display on while a tool
+    is running.
+  </p>
 
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Cookies</h2>
-        <p class="mt-4">
-          NoMore5Mins itself does not set cookies. However, our third-party services (described below)
-          may use cookies to function properly. These cookies are governed by the privacy policies
-          of those respective services.
-        </p>
-        <p class="mt-4">
-          You can control cookie behavior through your browser settings. Blocking cookies may
-          affect the display of advertisements but will not impact the functionality of our tools.
-        </p>
-      </section>
+  <h2>7. Hosting and logs</h2>
+  <p>
+    The site is served by a static hosting / CDN provider, which may process technical data such as IP address, user
+    agent and requested URL in server logs for security and reliability, typically for a short period.
+  </p>
 
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Third-Party Services</h2>
+  <h2>8. Your rights</h2>
+  <p>
+    Depending on where you live (for example under the GDPR or the CCPA/CPRA) you may have the right to access,
+    correct, delete or object to the processing of personal data, and to withdraw consent. Because we do not hold
+    personal data about visitors, most requests are best directed to the providers named above; you can also
+    <a href="/contact/">contact us</a> and we will help.
+  </p>
 
-        <h3 class="mt-6 font-display text-xl font-semibold text-slate-50 dark-text">Google Analytics</h3>
-        <p class="mt-3">
-          We use Google Analytics to understand how visitors interact with our site. Google Analytics
-          collects information such as how often users visit the site, what pages they visit, and
-          what other sites they used prior to coming to our site. We use this information solely
-          to improve NoMore5Mins. Google Analytics collects the IP address assigned to you on the
-          date you visit our site, but we do not combine this with other data to identify you personally.
-        </p>
-        <p class="mt-3">
-          You can opt out of Google Analytics by installing the
-          <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" class="text-amber-500 hover:text-amber-400 transition-colors">Google Analytics Opt-out Browser Add-on</a>.
-        </p>
+  <h2>9. Children</h2>
+  <p>The site is not directed at children under 13 and we do not knowingly collect their personal information.</p>
 
-        <h3 class="mt-6 font-display text-xl font-semibold text-slate-50 dark-text">Google AdSense</h3>
-        <p class="mt-3">
-          We use Google AdSense to display advertisements on our site. AdSense may use cookies and
-          web beacons to serve ads based on your prior visits to our site or other sites on the internet.
-          Google's use of advertising cookies enables it and its partners to serve ads based on your
-          visit to NoMore5Mins and/or other sites on the internet.
-        </p>
-        <p class="mt-3">
-          You can opt out of personalized advertising by visiting
-          <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="text-amber-500 hover:text-amber-400 transition-colors">Google Ads Settings</a>.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Data Security</h2>
-        <p class="mt-4">
-          We take reasonable precautions to protect the limited information associated with our service.
-          Our site is served over HTTPS to ensure data transmitted between your browser and our servers
-          is encrypted. Since we do not collect personal information or maintain user accounts, the
-          risk of a data breach affecting you personally is minimal.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Children's Privacy</h2>
-        <p class="mt-4">
-          NoMore5Mins is a general-audience tool and does not knowingly collect personal information
-          from children under the age of 13. Since we do not require account creation or collect
-          personal data, children can use our time tools without providing any identifying information.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Changes to This Policy</h2>
-        <p class="mt-4">
-          We may update this Privacy Policy from time to time. When we do, we will revise the
-          "Last updated" date at the top of this page. We encourage you to review this policy
-          periodically to stay informed about how we are protecting your privacy.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="font-display text-2xl font-semibold text-slate-50 dark-text">Contact Us</h2>
-        <p class="mt-4">
-          If you have any questions or concerns about this Privacy Policy, please contact us at
-          <a href="mailto:hello@nomore5mins.com" class="text-amber-500 hover:text-amber-400 transition-colors">hello@nomore5mins.com</a>.
-        </p>
-      </section>
-
-    </div>
-  </main>
-
-  <Footer />
-</BaseLayout>
+  <h2>10. Changes</h2>
+  <p>We may update this policy. The date at the top shows the latest revision.</p>
+</PageLayout>

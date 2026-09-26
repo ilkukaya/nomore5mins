@@ -1,0 +1,190 @@
+---
+import Icon from '../Icon.astro';
+import cities from '../../data/cities.json';
+import cityNames from '../../data/city-names.json';
+import { useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const names = cityNames as Record<string, Record<string, string>>;
+const list = cities.map((c) => ({ ...c, label: locale === 'en' ? c.name : names[c.id]?.[locale] || c.name }));
+
+// Sensible defaults per language; visitors can change the list.
+const DEFAULTS: Partial<Record<Locale, string[]>> = {
+  en: ['new-york', 'los-angeles', 'london', 'paris', 'dubai', 'delhi', 'tokyo', 'sydney'],
+  es: ['madrid', 'mexico-city', 'bogota', 'buenos-aires', 'new-york', 'london', 'tokyo', 'sydney'],
+  pt: ['sao-paulo', 'lisbon', 'new-york', 'london', 'paris', 'dubai', 'tokyo', 'sydney'],
+  fr: ['paris', 'london', 'new-york', 'casablanca', 'dubai', 'toronto', 'tokyo', 'sydney'],
+  de: ['berlin', 'zurich', 'london', 'new-york', 'dubai', 'istanbul', 'tokyo', 'sydney'],
+  it: ['rome', 'london', 'new-york', 'paris', 'dubai', 'buenos-aires', 'tokyo', 'sydney'],
+  ru: ['moscow', 'kyiv', 'istanbul', 'dubai', 'london', 'new-york', 'beijing', 'tokyo'],
+  tr: ['istanbul', 'berlin', 'london', 'new-york', 'dubai', 'moscow', 'tokyo', 'sydney'],
+  ar: ['riyadh', 'dubai', 'cairo', 'casablanca', 'istanbul', 'london', 'new-york', 'tokyo'],
+  hi: ['delhi', 'mumbai', 'dubai', 'london', 'new-york', 'singapore', 'tokyo', 'sydney'],
+  id: ['jakarta', 'singapore', 'kuala-lumpur', 'tokyo', 'dubai', 'london', 'new-york', 'sydney'],
+  ja: ['tokyo', 'seoul', 'beijing', 'singapore', 'london', 'paris', 'new-york', 'los-angeles'],
+  ko: ['seoul', 'tokyo', 'beijing', 'singapore', 'london', 'paris', 'new-york', 'los-angeles'],
+  zh: ['beijing', 'hong-kong', 'taipei', 'tokyo', 'singapore', 'london', 'new-york', 'sydney'],
+  vi: ['hanoi', 'ho-chi-minh-city', 'bangkok', 'singapore', 'tokyo', 'seoul', 'london', 'new-york'],
+};
+const defaults = DEFAULTS[locale] || DEFAULTS.en!;
+---
+
+<div
+  data-tool="world-clock"
+  data-i18n={JSON.stringify(t.client)}
+  data-cities={JSON.stringify(list.map(({ id, name, label, tz, cc }) => ({ id, label, tz, cc, search: `${label} ${name} ${tz}` })))}
+  data-defaults={JSON.stringify(defaults)}
+>
+  <section class="panel p-4 sm:p-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div class="flex-1">
+        <p class="eyebrow">{t.client.yourTime}</p>
+        <p class="digits mt-1 text-4xl font-light sm:text-5xl"><span data-local-time>--:--</span></p>
+        <p class="mt-1 text-sm text-ink-3" data-local-zone>&nbsp;</p>
+      </div>
+      <div class="relative sm:w-80">
+        <label class="sr-only" for="city-search">{t.worldClock.search}</label>
+        <Icon name="search" size={18} class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-ink-3" />
+        <input id="city-search" type="search" class="input ps-10" placeholder={t.worldClock.addTitle} autocomplete="off" data-search />
+        <ul class="panel absolute inset-x-0 top-full z-30 mt-2 max-h-72 overflow-y-auto p-1" data-results hidden></ul>
+      </div>
+    </div>
+  </section>
+
+  <ul class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-grid aria-live="off"></ul>
+</div>
+
+<script>
+  import { readStrings, fmt, INTL } from '../../scripts/lib/i18n';
+  import { shortTime } from '../../scripts/lib/time';
+  import { storage } from '../../scripts/lib/storage';
+
+  interface City {
+    id: string;
+    label: string;
+    tz: string;
+    cc: string;
+    search: string;
+  }
+
+  /** Case-, accent- and locale-insensitive text for searching (e.g. Turkish dotless ı). */
+  const fold = (text: string) =>
+    text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/ı/g, 'i').replace(/_/g, ' ');
+
+  document.querySelectorAll<HTMLElement>('[data-tool="world-clock"]').forEach((root) => {
+    const s = readStrings(root);
+    const cities: City[] = JSON.parse(root.dataset.cities!);
+    const byId = new Map(cities.map((c) => [c.id, c]));
+    let selected: string[] = storage.getJSON('nm5-world-cities', JSON.parse(root.dataset.defaults!)).filter((id: string) => byId.has(id));
+    const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+    const search = root.querySelector<HTMLInputElement>('[data-search]')!;
+    const results = root.querySelector<HTMLElement>('[data-results]')!;
+    const region = new Intl.DisplayNames([INTL], { type: 'region' });
+
+    const offsetMinutes = (tz: string, date: Date) => {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }).formatToParts(date);
+      const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+      const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'));
+      return Math.round((asUtc - Math.floor(date.getTime() / 60000) * 60000) / 60000);
+    };
+
+    function build() {
+      grid.replaceChildren(
+        ...selected.map((id) => {
+          const city = byId.get(id)!;
+          const li = document.createElement('li');
+          li.className = 'panel-flat relative p-4';
+          li.dataset.id = id;
+          li.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <p class="truncate font-semibold">${city.label}</p>
+                <p class="truncate text-xs text-ink-3">${city.cc ? region.of(city.cc) : 'UTC'}</p>
+              </div>
+              <button type="button" class="btn btn-ghost btn-icon -me-2 -mt-2 min-h-9 w-9 opacity-60 hover:opacity-100" data-remove aria-label="${s.remove}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+            </div>
+            <p class="digits mt-3 text-4xl font-light" data-time></p>
+            <p class="mt-2 flex items-center gap-1.5 text-sm text-ink-3"><span data-icon></span><span data-meta></span></p>`;
+          li.querySelector('[data-remove]')!.addEventListener('click', () => {
+            selected = selected.filter((x) => x !== id);
+            save();
+            build();
+          });
+          return li;
+        }),
+      );
+      tick();
+    }
+
+    const save = () => storage.setJSON('nm5-world-cities', selected);
+
+    function tick() {
+      const now = new Date();
+      root.querySelector('[data-local-time]')!.textContent = shortTime(now);
+      root.querySelector('[data-local-zone]')!.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' ');
+      const localOffset = -now.getTimezoneOffset();
+      const localDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      grid.querySelectorAll<HTMLElement>('li[data-id]').forEach((li) => {
+        const city = byId.get(li.dataset.id!)!;
+        const off = offsetMinutes(city.tz, now);
+        const diff = (off - localOffset) / 60;
+        const cityNow = new Date(now.getTime() + (off - localOffset) * 60000);
+        const cityDay = new Date(cityNow.getFullYear(), cityNow.getMonth(), cityNow.getDate()).getTime();
+        const day = cityDay > localDay ? s.tomorrow : cityDay < localDay ? s.yesterday : s.today;
+        const hour = cityNow.getHours();
+        const isDay = hour >= 6 && hour < 18;
+        const diffText = diff === 0 ? s.sameTime : fmt(diff > 0 ? s.hoursAhead : s.hoursBehind, { n: new Intl.NumberFormat(INTL, { maximumFractionDigits: 2 }).format(Math.abs(diff)) });
+        li.querySelector('[data-time]')!.textContent = shortTime(now, city.tz);
+        li.querySelector('[data-meta]')!.textContent = `${day} · ${diffText}`;
+        li.querySelector('[data-icon]')!.textContent = isDay ? '☀︎' : '☾';
+        li.querySelector('[data-icon]')!.setAttribute('title', isDay ? s.day : s.night);
+      });
+    }
+
+    function showResults() {
+      const q = fold(search.value.trim());
+      const matches = cities.filter((c) => !selected.includes(c.id) && (!q || fold(c.search).includes(q))).slice(0, 12);
+      results.hidden = false;
+      results.replaceChildren(
+        ...(matches.length
+          ? matches.map((c) => {
+              const li = document.createElement('li');
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-start hover:bg-surface-2';
+              btn.innerHTML = `<span>${c.label}</span><span class="digits text-sm text-ink-3">${shortTime(new Date(), c.tz)}</span>`;
+              btn.addEventListener('click', () => {
+                selected.push(c.id);
+                save();
+                build();
+                search.value = '';
+                results.hidden = true;
+              });
+              li.append(btn);
+              return li;
+            })
+          : [Object.assign(document.createElement('li'), { className: 'px-3 py-2.5 text-sm text-ink-3', textContent: s.searchNoResults })]),
+      );
+    }
+
+    search.addEventListener('input', showResults);
+    search.addEventListener('focus', showResults);
+    document.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('[data-search], [data-results]')) results.hidden = true;
+    });
+    search.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') results.hidden = true;
+      if (e.key === 'Enter') results.querySelector<HTMLButtonElement>('button')?.click();
+    });
+
+    build();
+    setInterval(tick, 1000);
+  });
+</script>

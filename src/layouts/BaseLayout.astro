@@ -1,75 +1,221 @@
 ---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import TabBar from '../components/TabBar.astro';
+import LangBanner from '../components/LangBanner.astro';
+import {
+  ADSENSE_CLIENT,
+  CF_ANALYTICS_TOKEN,
+  GA4_ID,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_PROFILES,
+  VERIFICATION,
+} from '../config';
+import { LOCALES, absoluteUrl, alternates as buildAlternates, localizePath, useTranslations, type Locale } from '../i18n';
+import type { ToolKey } from '../lib/routes';
+
 interface Props {
+  locale: Locale;
   title: string;
   description: string;
-  canonicalUrl?: string;
-  ogImage?: string;
-  type?: string;
+  /** Locale-independent route path, e.g. '/timer/'. */
+  path: string;
+  /** True when the same route exists in every language (adds hreflang). */
+  translated?: boolean;
+  activeTool?: ToolKey;
+  ogType?: 'website' | 'article';
+  jsonLd?: object[];
+  noindex?: boolean;
 }
 
 const {
+  locale,
   title,
   description,
-  canonicalUrl,
-  ogImage = '/og-default.png',
-  type = 'website',
+  path,
+  translated = true,
+  activeTool,
+  ogType = 'website',
+  jsonLd = [],
+  noindex = false,
 } = Astro.props;
 
-const siteUrl = 'https://nomore5mins.netlify.app';
-const canonical = canonicalUrl || new URL(Astro.url.pathname, siteUrl).href;
-const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).href;
+const meta = LOCALES[locale];
+const t = useTranslations(locale);
+const canonical = absoluteUrl(translated ? localizePath(locale, path) : path);
+const hreflangs = translated ? buildAlternates(path) : [];
+const ogImage = absoluteUrl(`/og/${translated ? locale : 'en'}.png`);
 
-import '../styles/global.css';
+const siteGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: `${SITE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512 },
+      ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: SITE_NAME,
+      description: t.meta.siteTagline,
+      publisher: { '@id': `${SITE_URL}/#organization` },
+      inLanguage: Object.values(LOCALES).map((l) => l.hreflang),
+    },
+  ],
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={meta.hreflang} dir={meta.dir} data-intl={meta.intl}>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/manifest.json" />
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
+    <link rel="canonical" href={canonical} />
+    {hreflangs.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
     />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href={canonical} />
+    <!-- Theme before paint -->
+    <script is:inline>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('nm5-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
 
-    <!-- Open Graph -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href={locale === 'en' ? '/manifest.webmanifest' : `/${locale}/manifest.webmanifest`} />
+    <meta name="application-name" content={SITE_NAME} />
+    <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:site_name" content="NoMore5Mins" />
-
-    <!-- Twitter Card -->
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
+    <meta property="og:locale" content={meta.ogLocale} />
+    {
+      translated &&
+        Object.values(LOCALES)
+          .filter((l) => l.code !== locale && hreflangs.some((h) => h.hreflang === l.hreflang))
+          .map((l) => <meta property="og:locale:alternate" content={l.ogLocale} />)
+    }
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image" content={ogImage} />
 
-    <!-- Theme script: prevent FOUC by setting class before paint -->
+    {VERIFICATION.google && <meta name="google-site-verification" content={VERIFICATION.google} />}
+    {VERIFICATION.bing && <meta name="msvalidate.01" content={VERIFICATION.bing} />}
+    {VERIFICATION.yandex && <meta name="yandex-verification" content={VERIFICATION.yandex} />}
+    {ADSENSE_CLIENT && <meta name="google-adsense-account" content={ADSENSE_CLIENT} />}
+    {ADSENSE_CLIENT && <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />}
+
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-readable site summary" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(siteGraph)} />
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+  </head>
+  <body class="has-tabbar">
+    <a href="#main" class="skip-link">{t.nav.skip}</a>
+    <LangBanner locale={locale} />
+    <SiteHeader locale={locale} path={path} translated={translated} activeTool={activeTool} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter locale={locale} path={path} translated={translated} />
+    <TabBar locale={locale} activeTool={activeTool} />
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    {
+      GA4_ID && (
+        <script is:inline define:vars={{ GA4_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          window.gtag = gtag;
+          gtag('consent', 'default', {
+            ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied',
+            region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB','CH'],
+            wait_for_update: 500,
+          });
+          gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+          gtag('js', new Date());
+          gtag('config', GA4_ID, { anonymize_ip: true });
+          window.__nm5Deferred = (window.__nm5Deferred || []).concat('https://www.googletagmanager.com/gtag/js?id=' + GA4_ID);
+        </script>
+      )
+    }
+    {
+      ADSENSE_CLIENT && (
+        <script is:inline define:vars={{ ADSENSE_CLIENT }}>
+          window.__nm5Deferred = (window.__nm5Deferred || []).concat(
+            'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ADSENSE_CLIENT
+          );
+        </script>
+      )
+    }
     <script is:inline>
+      // Load third-party scripts (ads, analytics) after the page is interactive,
+      // so they never delay the tools or hurt Core Web Vitals.
       (function () {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'light') {
-          document.documentElement.classList.add('light');
+        var done = false;
+        function load() {
+          if (done) return;
+          done = true;
+          (window.__nm5Deferred || []).forEach(function (src) {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = src;
+            if (src.indexOf('googlesyndication') > -1) s.crossOrigin = 'anonymous';
+            document.head.appendChild(s);
+          });
+          document.querySelectorAll('ins.adsbygoogle').forEach(function () {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          });
         }
+        ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (e) {
+          addEventListener(e, load, { once: true, passive: true });
+        });
+        addEventListener('load', function () {
+          setTimeout(load, 2500);
+        });
       })();
     </script>
-  </head>
-  <body>
-    <slot />
+    {
+      CF_ANALYTICS_TOKEN && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })}
+        />
+      )
+    }
   </body>
 </html>

@@ -1,0 +1,195 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { ACTIVE_LOCALES, LOCALES, localizePath, useTranslations, type Locale } from '../i18n';
+import { TOOL_ICONS, TOOL_ORDER, TOOL_PATHS, type ToolKey } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  path: string;
+  translated: boolean;
+  activeTool?: ToolKey;
+}
+
+const { locale, path, translated, activeTool } = Astro.props;
+const t = useTranslations(locale);
+const home = localizePath(locale, '/');
+const langTarget = (code: Locale) => localizePath(code, translated ? path : '/');
+---
+
+<header class="hide-in-fs sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
+  <div class="container-page flex h-14 items-center gap-2 md:h-16">
+    <a href={home} class="me-auto rounded-lg py-1" aria-label="NoMore5Mins">
+      <Logo />
+    </a>
+
+    <nav class="hidden lg:block" aria-label={t.nav.allTools}>
+      <ul class="flex items-center gap-0.5">
+        {
+          TOOL_ORDER.map((key) => (
+            <li>
+              <a
+                href={localizePath(locale, TOOL_PATHS[key])}
+                class:list={[
+                  'rounded-full px-3 py-2 text-[0.9375rem] font-medium transition-colors',
+                  key === activeTool ? 'bg-surface-2 text-ink' : 'text-ink-2 hover:text-ink',
+                ]}
+                aria-current={key === activeTool ? 'page' : undefined}
+              >
+                {key === 'pomodoro' ? t.nav.pomodoro : t.nav[key]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <button
+      type="button"
+      class="btn btn-ghost min-h-10 gap-1.5 px-3 text-sm font-semibold"
+      data-open-dialog="lang-dialog"
+      aria-haspopup="dialog"
+      aria-label={t.nav.language}
+    >
+      <Icon name="languages" size={18} />
+      <span class="uppercase">{locale}</span>
+    </button>
+    <button type="button" class="btn btn-ghost btn-icon min-h-10 w-10" data-theme-toggle aria-label={t.nav.theme}>
+      <Icon name="moon" size={18} class="theme-dark-hidden" />
+      <Icon name="sun" size={18} class="theme-light-hidden" />
+    </button>
+    <button
+      type="button"
+      class="btn btn-ghost btn-icon min-h-10 w-10 lg:hidden"
+      data-open-dialog="menu-dialog"
+      aria-haspopup="dialog"
+      aria-label={t.nav.menu}
+    >
+      <Icon name="menu" size={20} />
+    </button>
+  </div>
+</header>
+
+<dialog id="menu-dialog" class="sheet" aria-label={t.nav.menu}>
+  <div class="sheet-head">
+    <span class="font-semibold">{t.nav.allTools}</span>
+    <button type="button" class="btn btn-ghost btn-icon min-h-10 w-10" data-close-dialog aria-label={t.nav.close}>
+      <Icon name="x" />
+    </button>
+  </div>
+  <ul class="grid gap-1 p-2">
+    {
+      TOOL_ORDER.map((key) => (
+        <li>
+          <a
+            href={localizePath(locale, TOOL_PATHS[key])}
+            class:list={[
+              'flex items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-surface-2',
+              key === activeTool && 'bg-surface-2',
+            ]}
+          >
+            <span class="grid h-10 w-10 flex-none place-items-center rounded-xl bg-surface-2 text-ink">
+              <Icon name={TOOL_ICONS[key]} />
+            </span>
+            <span class="min-w-0">
+              <span class="block font-semibold">{t.tools[key]}</span>
+              <span class="block truncate text-sm text-ink-3">{t.toolBlurbs[key]}</span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href="/blog/" class="flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-surface-2">
+        <span class="grid h-10 w-10 flex-none place-items-center rounded-xl bg-surface-2">
+          <Icon name="external" />
+        </span>
+        <span class="font-semibold">{t.footer.blog}</span>
+      </a>
+    </li>
+  </ul>
+</dialog>
+
+<dialog id="lang-dialog" class="sheet" aria-label={t.nav.language}>
+  <div class="sheet-head">
+    <span class="font-semibold">{t.nav.language}</span>
+    <button type="button" class="btn btn-ghost btn-icon min-h-10 w-10" data-close-dialog aria-label={t.nav.close}>
+      <Icon name="x" />
+    </button>
+  </div>
+  <ul class="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3">
+    {
+      ACTIVE_LOCALES.map((code) => (
+        <li>
+          <a
+            href={langTarget(code)}
+            hreflang={LOCALES[code].hreflang}
+            lang={LOCALES[code].hreflang}
+            class:list={[
+              'flex items-center justify-between gap-2 rounded-xl px-3 py-3 text-[0.9375rem] transition-colors hover:bg-surface-2',
+              code === locale && 'bg-surface-2 font-semibold',
+            ]}
+            aria-current={code === locale ? 'true' : undefined}
+            data-lang-link={code}
+          >
+            <span>{LOCALES[code].name}</span>
+            {code === locale && <Icon name="check" size={16} class="text-accent" />}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</dialog>
+
+<style is:global>
+  :root[data-theme='dark'] .theme-dark-hidden,
+  :root[data-theme='light'] .theme-light-hidden {
+    display: none;
+  }
+  .sheet {
+    margin: auto auto 0;
+    width: 100%;
+    max-width: 34rem;
+    max-height: 85dvh;
+    border-radius: 24px 24px 0 0;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 0 0 env(safe-area-inset-bottom);
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 640px) {
+    .sheet {
+      margin: auto;
+      border-radius: 24px;
+    }
+  }
+  .sheet::backdrop {
+    background: rgb(0 0 0 / 0.45);
+    backdrop-filter: blur(2px);
+  }
+  .sheet[open] {
+    animation: sheet-in 0.2s ease-out;
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+  .sheet-head {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0.75rem 0.5rem 1.25rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+</style>
+
+<script>
+  import { initChrome } from '../scripts/chrome';
+  initChrome();
+</script>
