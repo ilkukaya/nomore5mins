@@ -1,23 +1,8 @@
+# Headers and redirects live in public/_headers and public/_redirects
+# so the same build also works on Cloudflare Pages.
 [build]
   command = "npm run build"
   publish = "dist"
 
-[[headers]]
-  for = "/sounds/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[redirects]]
-  from = "/set-alarm/*"
-  to = "/alarm-clock/set-alarm-:splat"
-  status = 301
+[build.environment]
+  NODE_VERSION = "22"

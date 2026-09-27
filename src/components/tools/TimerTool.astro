@@ -1,0 +1,124 @@
+---
+import Icon from '../Icon.astro';
+import SoundPicker from './SoundPicker.astro';
+import { formatDurationShort, localizePath, useTranslations, type Locale } from '../../i18n';
+import { TIMER_PRESETS, timerPresetPath } from '../../lib/routes';
+
+interface Props {
+  locale: Locale;
+  /** Preset duration in seconds (preset pages). */
+  seconds?: number;
+}
+const { locale, seconds } = Astro.props;
+const t = useTranslations(locale);
+const quick = [60, 180, 300, 600, 900, 1200, 1500, 1800, 2700, 3600];
+const initial = seconds ?? 300;
+const h = Math.floor(initial / 3600);
+const m = Math.floor((initial % 3600) / 60);
+const sec = initial % 60;
+const pad = (n: number) => String(n).padStart(2, '0');
+const R = 46;
+const C = 2 * Math.PI * R;
+const presetHref = (s: number) => {
+  const preset = TIMER_PRESETS.find((p) => p.seconds === s);
+  return preset ? localizePath(locale, timerPresetPath(preset)) : undefined;
+};
+---
+
+<div data-tool="timer" data-i18n={JSON.stringify(t.client)} data-seconds={initial} data-fixed={seconds ? 'true' : undefined} data-pause={t.common.pause} data-resume={t.common.resume} data-start-text={t.common.start}>
+  <div class="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+    <section class="stage relative flex min-h-[320px] flex-col items-center justify-center md:min-h-[420px]" data-fs-target>
+      <button type="button" class="btn btn-ghost btn-icon absolute end-3 top-3" data-fullscreen aria-label={t.common.fullscreen} title={`${t.common.fullscreen} (F)`}>
+        <Icon name="expand" size={18} />
+      </button>
+
+      <div class="ring-box relative grid aspect-square w-full max-w-[min(78vw,420px)] place-items-center">
+        <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r={R} fill="none" stroke-width="2.5" class="ring-track"></circle>
+          <circle
+            cx="50"
+            cy="50"
+            r={R}
+            fill="none"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            class="ring-bar"
+            stroke-dasharray={C}
+            stroke-dashoffset="0"
+            data-ring></circle>
+        </svg>
+        <div class="text-center">
+          <div class="digits digits-md" role="timer" aria-live="off" data-display>
+            {`${pad(h)}:${pad(m)}:${pad(sec)}`}
+          </div>
+          <p class="mt-2 text-sm font-medium text-ink-3" data-status>{t.client.ready}</p>
+          <p class="mt-1 text-sm text-ink-3" data-ends>&nbsp;</p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <button type="button" class="btn btn-primary btn-lg min-w-40" data-start>
+          <Icon name="play" />
+          <span data-start-label>{t.common.start}</span>
+        </button>
+        <button type="button" class="btn btn-ghost btn-lg" data-reset aria-label={t.common.reset} title={`${t.common.reset} (R)`}>
+          <Icon name="reset" />
+        </button>
+      </div>
+    </section>
+
+    <section class="panel p-5 sm:p-6" data-setup>
+      <div class="grid grid-cols-3 gap-2" dir="ltr">
+        <label class="block text-center">
+          <span class="field-label">{t.common.hours}</span>
+          <input type="number" inputmode="numeric" min="0" max="99" value={h} class="input number-input" data-h />
+        </label>
+        <label class="block text-center">
+          <span class="field-label">{t.common.minutes}</span>
+          <input type="number" inputmode="numeric" min="0" max="59" value={m} class="input number-input" data-m />
+        </label>
+        <label class="block text-center">
+          <span class="field-label">{t.common.seconds}</span>
+          <input type="number" inputmode="numeric" min="0" max="59" value={sec} class="input number-input" data-s />
+        </label>
+      </div>
+
+      <p class="field-label mt-5">{t.timer.presetsTitle}</p>
+      <div class="flex flex-wrap gap-2">
+        {
+          quick.map((q) => (
+            <a class="chip" href={presetHref(q)} data-preset={q} aria-pressed={q === initial ? 'true' : 'false'}>
+              {formatDurationShort(locale, q / 60)}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="mt-5">
+        <SoundPicker locale={locale} id="timer" defaultSound="digital-beep" />
+      </div>
+    </section>
+  </div>
+
+  <div class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="timer-done-title" data-done>
+    <div class="w-full max-w-sm text-center">
+      <div class="shake mx-auto mb-4 grid h-24 w-24 place-items-center rounded-full bg-accent text-accent-ink">
+        <Icon name="timer" size={48} />
+      </div>
+      <h2 id="timer-done-title" class="h-display">{t.client.timesUp}</h2>
+      <p class="digits digits-md mt-4 text-ink-3" data-done-duration></p>
+      <div class="mt-8 grid gap-3">
+        <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss>{t.common.stop}</button>
+        <button type="button" class="btn btn-ghost btn-block" data-restart>
+          <Icon name="reset" />
+          {t.common.start}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initTimer } from '../../scripts/tools/timer';
+  document.querySelectorAll<HTMLElement>('[data-tool="timer"]').forEach(initTimer);
+</script>

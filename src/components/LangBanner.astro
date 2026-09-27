@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { ACTIVE_LOCALES, LOCALES, fmt, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+// Each suggestion is written in the language being suggested, so the visitor can read it.
+const strings = Object.fromEntries(
+  ACTIVE_LOCALES.filter((code) => code !== locale).map((code) => {
+    const b = useTranslations(code).langBanner;
+    return [code, { text: fmt(b.text, { language: LOCALES[code].name }), switch: b.switch, dismiss: b.dismiss }];
+  }),
+);
+---
+
+<div id="lang-banner" class="hide-in-fs border-b border-line bg-surface" hidden data-strings={JSON.stringify(strings)}>
+  <div class="container-page flex items-center gap-3 py-2 text-sm">
+    <Icon name="languages" size={18} class="flex-none text-ink-3" />
+    <span data-text class="me-auto"></span>
+    <a data-switch class="btn btn-ink min-h-9 px-4 text-sm" href="/"></a>
+    <button type="button" data-dismiss class="btn btn-ghost btn-icon min-h-9 w-9"><Icon name="x" size={16} /></button>
+  </div>
+</div>

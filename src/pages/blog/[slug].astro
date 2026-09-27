@@ -1,0 +1,88 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import ProductShelf from '../../components/ProductShelf.astro';
+import Icon from '../../components/Icon.astro';
+import { SITE_NAME } from '../../config';
+import { absoluteUrl, formatDate, useTranslations } from '../../i18n';
+import { TOOL_ICONS, TOOL_PATHS } from '../../lib/routes';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const t = useTranslations('en');
+const url = absoluteUrl(`/blog/${post.id}/`);
+const words = (post.body || '').split(/\s+/).length;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    description: post.data.description,
+    url,
+    mainEntityOfPage: url,
+    image: absoluteUrl('/og/en.png'),
+    datePublished: post.data.published.toISOString(),
+    dateModified: post.data.updated.toISOString(),
+    wordCount: words,
+    inLanguage: 'en',
+    author: { '@type': 'Organization', name: `${SITE_NAME} Team`, url: absoluteUrl('/about/') },
+    publisher: { '@id': `${absoluteUrl('/')}#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: absoluteUrl('/blog/') },
+      { '@type': 'ListItem', position: 3, name: post.data.title, item: url },
+    ],
+  },
+];
+const toc = headings.filter((h) => h.depth === 2);
+const tool = post.data.tool;
+---
+
+<PageLayout
+  title={`${post.data.title} | NoMore5Mins`}
+  description={post.data.description}
+  path={`/blog/${post.id}/`}
+  h1={post.data.title}
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Blog', href: '/blog/' }, { label: post.data.title, href: `/blog/${post.id}/` }]}
+  jsonLd={jsonLd}
+  ogType="article"
+>
+  <p slot="meta" class="mt-4 text-sm text-ink-3">
+    By NoMore5Mins Team · <time datetime={post.data.updated.toISOString()}>Updated {formatDate('en', post.data.updated)}</time> · {Math.max(1, Math.round(words / 220))} min read
+  </p>
+  {
+    toc.length > 2 && (
+      <nav aria-label="Contents" class="panel-flat p-5" style="font-size:0.9375rem">
+        <strong>Contents</strong>
+        <ol>
+          {toc.map((h) => (
+            <li><a href={`#${h.slug}`}>{h.text}</a></li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+  <Content />
+
+  <div slot="after" class="mt-12 space-y-12">
+    <a href={TOOL_PATHS[tool]} class="panel flex items-center gap-4 p-5 transition-colors hover:border-line-strong">
+      <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-accent text-accent-ink"><Icon name={TOOL_ICONS[tool]} size={24} /></span>
+      <span class="flex-1">
+        <span class="block font-bold">{t.tools[tool]}</span>
+        <span class="block text-sm text-ink-3">{t.toolBlurbs[tool]}</span>
+      </span>
+      <Icon name="arrow" class="rtl:rotate-180" />
+    </a>
+    <ProductShelf locale="en" group={tool === 'pomodoro' || tool === 'timer' || tool === 'stopwatch' ? 'focus' : 'sleep'} />
+  </div>
+</PageLayout>

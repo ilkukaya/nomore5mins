@@ -1,0 +1,215 @@
+---
+/**
+ * Shared shell for every tool page: heading → tool → ad → how-to/facts →
+ * article → presets → affiliate shelf → FAQ → related tools.
+ * Also emits all structured data (WebApplication, HowTo, FAQPage, BreadcrumbList).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import Faq from './Faq.astro';
+import AdSlot from './AdSlot.astro';
+import ProductShelf from './ProductShelf.astro';
+import Icon from './Icon.astro';
+import { BUILD_DATE } from '../config';
+import { LOCALES, absoluteUrl, fmt, formatDate, localizePath, useTranslations, type Locale } from '../i18n';
+import { TOOL_ICONS, TOOL_ORDER, TOOL_PATHS, type ToolKey } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  path: string;
+  tool: ToolKey;
+  metaTitle: string;
+  metaDescription: string;
+  h1: string;
+  lead: string;
+  /** Extra crumb for preset pages. */
+  crumb?: string;
+  steps?: string[];
+  facts?: string[];
+  contentTitle?: string;
+  content?: string[];
+  faq: { q: string; a: string }[];
+  shelf?: 'sleep' | 'focus';
+}
+
+const {
+  locale,
+  path,
+  tool,
+  metaTitle,
+  metaDescription,
+  h1,
+  lead,
+  crumb,
+  steps = [],
+  facts = [],
+  contentTitle,
+  content = [],
+  faq,
+  shelf,
+} = Astro.props;
+
+const t = useTranslations(locale);
+const L = (p: string) => localizePath(locale, p);
+const url = absoluteUrl(L(path));
+
+const crumbs = [
+  { label: t.nav.home, href: L('/') },
+  { label: t.tools[tool], href: L(TOOL_PATHS[tool]) },
+  ...(crumb ? [{ label: crumb, href: L(path) }] : []),
+];
+
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: h1,
+    url,
+    description: metaDescription,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any (web browser)',
+    browserRequirements: 'Requires JavaScript. Works in Chrome, Safari, Firefox and Edge.',
+    isAccessibleForFree: true,
+    inLanguage: LOCALES[locale].hreflang,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    ...(facts.length ? { featureList: facts } : {}),
+    dateModified: BUILD_DATE.toISOString().slice(0, 10),
+    publisher: { '@id': `${absoluteUrl('/')}#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.label,
+      item: absoluteUrl(c.href),
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: LOCALES[locale].hreflang,
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+];
+
+if (steps.length) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: `${t.common.howTitle}: ${h1}`,
+    inLanguage: LOCALES[locale].hreflang,
+    totalTime: 'PT1M',
+    tool: [{ '@type': 'HowToTool', name: 'Web browser' }],
+    step: steps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, text, url: `${url}#how` })),
+  });
+}
+
+const related = TOOL_ORDER.filter((key) => key !== tool);
+---
+
+<BaseLayout locale={locale} title={metaTitle} description={metaDescription} path={path} activeTool={tool} jsonLd={jsonLd}>
+  <div class="container-page pt-4 md:pt-6">
+    <Breadcrumbs items={crumbs} />
+    <header class="hide-in-fs mb-5 mt-3 max-w-3xl md:mb-7">
+      <h1 class="h-display">{h1}</h1>
+      <p class="lead mt-3">{lead}</p>
+    </header>
+
+    <slot />
+
+    <p class="hide-in-fs mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-ink-3">
+      <Icon name="check" size={14} />
+      {t.common.free}
+    </p>
+  </div>
+
+  <div class="container-page">
+    <AdSlot placement="top" />
+  </div>
+
+  <div class="hide-in-fs container-page mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div class="min-w-0 space-y-14">
+      {
+        steps.length > 0 && (
+          <section id="how" aria-labelledby="how-title">
+            <h2 id="how-title" class="h-section mb-5">{t.common.howTitle}</h2>
+            <ol class="grid gap-3 sm:grid-cols-2">
+              {steps.map((step, i) => (
+                <li class="panel-flat flex gap-3 p-4">
+                  <span class="grid h-7 w-7 flex-none place-items-center rounded-full bg-ink text-sm font-bold text-bg">
+                    {i + 1}
+                  </span>
+                  <span class="text-[0.9375rem] text-ink-2">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+
+      <slot name="after-tool" />
+
+      {
+        content.length > 0 && (
+          <section class="prose max-w-none" aria-labelledby="about-title">
+            <h2 id="about-title" style="margin-top:0">{contentTitle}</h2>
+            {content.map((p) => <p>{p}</p>)}
+          </section>
+        )
+      }
+
+      <AdSlot placement="content" />
+
+      <slot name="presets" />
+
+      {shelf && <ProductShelf locale={locale} group={shelf} />}
+
+      <Faq title={t.common.faqTitle} items={faq} />
+    </div>
+
+    <aside class="space-y-8 lg:sticky lg:top-24 lg:self-start">
+      {
+        facts.length > 0 && (
+          <section class="panel-flat p-5" aria-labelledby="facts-title">
+            <h2 id="facts-title" class="eyebrow mb-3">{t.common.keyFacts}</h2>
+            <ul class="space-y-2.5 text-[0.9375rem]">
+              {facts.map((fact) => (
+                <li class="flex gap-2.5">
+                  <Icon name="check" size={18} class="mt-0.5 flex-none text-ok" />
+                  <span>{fact}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      <nav aria-labelledby="related-title">
+        <h2 id="related-title" class="eyebrow mb-3">{t.common.related}</h2>
+        <ul class="grid gap-1">
+          {related.map((key) => (
+            <li>
+              <a
+                href={L(TOOL_PATHS[key])}
+                class="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface"
+              >
+                <span class="grid h-9 w-9 flex-none place-items-center rounded-lg bg-surface text-ink-2">
+                  <Icon name={TOOL_ICONS[key]} size={18} />
+                </span>
+                <span class="text-[0.9375rem] font-medium">{t.tools[key]}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <p class="text-xs text-ink-3">{fmt(t.common.updated, { date: formatDate(locale, BUILD_DATE) })}</p>
+    </aside>
+  </div>
+
+  <AdSlot placement="bottom" class="container-page" />
+</BaseLayout>

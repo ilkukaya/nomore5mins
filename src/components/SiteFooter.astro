@@ -1,0 +1,90 @@
+---
+import Logo from './Logo.astro';
+import { ACTIVE_LOCALES, LOCALES, fmt, localizePath, useTranslations, type Locale } from '../i18n';
+import {
+  TOOL_ORDER,
+  TOOL_PATHS,
+  alarmLabel,
+  alarmPresetPath,
+  popularAlarms,
+  popularTimers,
+  timerLabel,
+  timerPresetPath,
+} from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  path: string;
+  translated: boolean;
+}
+const { locale, path, translated } = Astro.props;
+const t = useTranslations(locale);
+const L = (p: string) => localizePath(locale, p);
+const year = new Date().getFullYear();
+
+const popular = [
+  ...popularAlarms()
+    .slice(2, 6)
+    .map((p) => ({ href: L(alarmPresetPath(p)), label: fmt(t.alarmPreset.h1, { time: alarmLabel(locale, p) }) })),
+  ...popularTimers()
+    .filter((p) => ['5-minute-timer', '10-minute-timer', '25-minute-timer', '1-hour-timer'].includes(p.slug))
+    .map((p) => ({ href: L(timerPresetPath(p)), label: fmt(t.timerPreset.h1, { duration: timerLabel(locale, p, true) }) })),
+];
+---
+
+<footer class="hide-in-fs mt-20 border-t border-line bg-surface">
+  <div class="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+    <div>
+      <a href={L('/')} aria-label="NoMore5Mins"><Logo /></a>
+      <p class="mt-3 max-w-xs text-sm text-ink-3">{t.footer.tagline}</p>
+    </div>
+
+    <nav aria-label={t.footer.toolsTitle}>
+      <h2 class="eyebrow mb-3">{t.footer.toolsTitle}</h2>
+      <ul class="space-y-2 text-[0.9375rem]">
+        {TOOL_ORDER.map((key) => <li><a class="link" href={L(TOOL_PATHS[key])}>{t.tools[key]}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav aria-label={t.footer.popularTitle}>
+      <h2 class="eyebrow mb-3">{t.footer.popularTitle}</h2>
+      <ul class="space-y-2 text-[0.9375rem]">
+        {popular.map((item) => <li><a class="link" href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav aria-label={t.footer.siteTitle}>
+      <h2 class="eyebrow mb-3">{t.footer.siteTitle}</h2>
+      <ul class="space-y-2 text-[0.9375rem]">
+        <li><a class="link" href="/about/">{t.footer.about}</a></li>
+        <li><a class="link" href="/blog/">{t.footer.blog}</a></li>
+        <li><a class="link" href="/contact/">{t.footer.contact}</a></li>
+        <li><a class="link" href="/privacy-policy/">{t.footer.privacy}</a></li>
+        <li><a class="link" href="/terms-of-service/">{t.footer.terms}</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container-page border-t border-line py-6">
+    <h2 class="sr-only">{t.footer.languages}</h2>
+    <ul class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink-3">
+      {
+        ACTIVE_LOCALES.map((code) => (
+          <li>
+            <a
+              class:list={['hover:text-ink', code === locale && 'font-semibold text-ink']}
+              href={localizePath(code, translated ? path : '/')}
+              hreflang={LOCALES[code].hreflang}
+              lang={LOCALES[code].hreflang}
+              data-lang-link={code}
+            >
+              {LOCALES[code].name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-6 max-w-3xl text-xs leading-relaxed text-ink-3">{t.products.disclosure}</p>
+    <p class="mt-2 text-xs text-ink-3">© {year} NoMore5Mins. {t.footer.rights}</p>
+  </div>
+</footer>

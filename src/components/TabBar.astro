@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+import { localizePath, useTranslations, type Locale } from '../i18n';
+import { TAB_TOOLS, TOOL_ICONS, TOOL_PATHS, type ToolKey } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+  activeTool?: ToolKey;
+}
+const { locale, activeTool } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<nav
+  class="hide-in-fs fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+  aria-label={t.nav.allTools}
+>
+  <ul class="grid h-[64px] grid-cols-5">
+    {
+      TAB_TOOLS.map((key) => (
+        <li>
+          <a
+            href={localizePath(locale, TOOL_PATHS[key])}
+            class:list={[
+              'flex h-full flex-col items-center justify-center gap-1 text-[0.625rem] font-semibold leading-none',
+              key === activeTool ? 'text-accent' : 'text-ink-3',
+            ]}
+            aria-current={key === activeTool ? 'page' : undefined}
+          >
+            <Icon name={TOOL_ICONS[key]} size={22} />
+            <span class="max-w-full truncate px-1">{t.nav[key]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

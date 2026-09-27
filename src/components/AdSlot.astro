@@ -1,0 +1,26 @@
+---
+import { ADSENSE_CLIENT, ADSENSE_SLOTS } from '../config';
+
+interface Props {
+  placement: keyof typeof ADSENSE_SLOTS;
+  class?: string;
+}
+const { placement, class: className } = Astro.props;
+const slot = ADSENSE_SLOTS[placement];
+// Nothing is rendered until AdSense is configured, so there are no empty boxes before approval.
+---
+
+{
+  ADSENSE_CLIENT && slot && (
+    <aside class:list={['hide-in-fs my-10', className]} aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <ins
+        class="adsbygoogle ad-slot"
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </aside>
+  )
+}

@@ -1,0 +1,33 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { CONTACT_EMAIL } from '../config';
+---
+
+<PageLayout
+  title="Contact | NoMore5Mins"
+  description="Contact NoMore5Mins: report a bug, request a language or tool, or ask about partnerships."
+  path="/contact/"
+  h1="Contact us"
+  intro="Bug reports, feature ideas, translation fixes and partnership requests are all welcome."
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact/' }]}
+>
+  {CONTACT_EMAIL && <p>Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>}
+  <form slot="after" name="contact" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="company" class="panel mt-2 grid gap-4 p-5 sm:p-6">
+    <input type="hidden" name="form-name" value="contact" />
+    <p class="hidden"><label>Company <input name="company" /></label></p>
+    <label><span class="field-label">Name</span><input class="input" name="name" autocomplete="name" /></label>
+    <label><span class="field-label">Email (so we can reply)</span><input class="input" type="email" name="email" autocomplete="email" /></label>
+    <label>
+      <span class="field-label">Topic</span>
+      <select class="select" name="topic">
+        <option>Bug report</option>
+        <option>Feature request</option>
+        <option>Translation</option>
+        <option>Partnership / advertising</option>
+        <option>Other</option>
+      </select>
+    </label>
+    <label><span class="field-label">Message</span><textarea class="input min-h-40 py-3" name="message" required></textarea></label>
+    <button class="btn btn-primary btn-lg" type="submit">Send message</button>
+  </form>
+</PageLayout>

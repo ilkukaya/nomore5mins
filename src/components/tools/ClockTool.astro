@@ -1,0 +1,95 @@
+---
+import Icon from '../Icon.astro';
+import { useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div data-tool="clock" data-i18n={JSON.stringify(t.client)}>
+  <section class="stage relative flex min-h-[320px] flex-col items-center justify-center text-center md:min-h-[440px]" data-fs-target>
+    <button type="button" class="btn btn-ghost btn-icon absolute end-3 top-3" data-fullscreen aria-label={t.common.fullscreen} title={`${t.common.fullscreen} (F)`}>
+      <Icon name="expand" size={18} />
+    </button>
+    <div class="digits digits-xl"><span data-clock>--:--:--</span><span class="unit-sm" data-period></span></div>
+    <p class="mt-4 text-lg text-ink-2" data-date>&nbsp;</p>
+    <p class="mt-1 text-sm text-ink-3" data-zone>&nbsp;</p>
+  </section>
+
+  <div class="mt-4 grid gap-4 sm:grid-cols-[1fr_auto]">
+    <dl class="panel-flat grid grid-cols-2 gap-4 p-5 sm:grid-cols-3">
+      <div><dt class="eyebrow">{t.clock.weekLabel}</dt><dd class="digits mt-1 text-2xl" data-week>–</dd></div>
+      <div><dt class="eyebrow">{t.clock.dayOfYear}</dt><dd class="digits mt-1 text-2xl" data-doy>–</dd></div>
+      <div class="col-span-2 sm:col-span-1"><dt class="eyebrow">UTC</dt><dd class="digits mt-1 text-2xl" data-utc>–</dd></div>
+    </dl>
+    <div class="panel-flat flex flex-col justify-center gap-3 p-5">
+      <label class="flex items-center gap-3 text-[0.9375rem]"><input type="checkbox" data-opt="h24" /> {t.clock.format24}</label>
+      <label class="flex items-center gap-3 text-[0.9375rem]"><input type="checkbox" data-opt="seconds" checked /> {t.clock.showSeconds}</label>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { clockParts, longDate, uses12h } from '../../scripts/lib/time';
+  import { storage } from '../../scripts/lib/storage';
+  import { keepAwake, onShortcut, toggleFullscreen } from '../../scripts/lib/device';
+
+  document.querySelectorAll<HTMLElement>('[data-tool="clock"]').forEach((root) => {
+    const $ = (sel: string) => root.querySelector<HTMLElement>(sel)!;
+    const h24 = root.querySelector<HTMLInputElement>('[data-opt="h24"]')!;
+    const secs = root.querySelector<HTMLInputElement>('[data-opt="seconds"]')!;
+    const saved = storage.getJSON<{ h24?: boolean; seconds?: boolean }>('nm5-clock', {});
+    h24.checked = saved.h24 ?? !uses12h();
+    secs.checked = saved.seconds ?? true;
+    [h24, secs].forEach((el) =>
+      el.addEventListener('change', () => {
+        storage.setJSON('nm5-clock', { h24: h24.checked, seconds: secs.checked });
+        tick();
+      }),
+    );
+
+    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const offset = () => {
+      const min = -new Date().getTimezoneOffset();
+      const sign = min >= 0 ? '+' : '−';
+      const abs = Math.abs(min);
+      return `UTC${sign}${Math.floor(abs / 60)}${abs % 60 ? ':' + String(abs % 60).padStart(2, '0') : ''}`;
+    };
+
+    function isoWeek(d: Date) {
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const day = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - day);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    }
+
+    function tick() {
+      const now = new Date();
+      const { main, period } = clockParts(now, { hour12: !h24.checked, seconds: secs.checked });
+      $('[data-clock]').textContent = main;
+      $('[data-period]').textContent = period;
+      $('[data-date]').textContent = longDate(now);
+      $('[data-zone]').textContent = `${zone.replace(/_/g, ' ')} · ${offset()}`;
+      $('[data-week]').textContent = String(isoWeek(now));
+      const start = new Date(now.getFullYear(), 0, 0);
+      $('[data-doy]').textContent = String(Math.floor((now.getTime() - start.getTime()) / 86400000));
+      $('[data-utc]').textContent = now.toISOString().slice(11, 16);
+      document.title = `${main} ${period}`.trim() + ' · NoMore5Mins';
+    }
+
+    tick();
+    setTimeout(() => {
+      tick();
+      setInterval(tick, 1000);
+    }, 1000 - (Date.now() % 1000));
+    $('[data-fullscreen]').addEventListener('click', () => {
+      toggleFullscreen();
+      keepAwake(document.documentElement.classList.contains('is-fullscreen'));
+    });
+    onShortcut({ f: toggleFullscreen });
+  });
+</script>

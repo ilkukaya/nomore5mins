@@ -1,0 +1,47 @@
+---
+import Icon from '../Icon.astro';
+import sounds from '../../data/sounds.json';
+import { useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  id: string;
+  defaultSound?: string;
+  showVolume?: boolean;
+  label?: string;
+}
+const { locale, id, defaultSound = 'classic-ring', showVolume = true, label } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div class="grid gap-4" data-sound-picker data-default={defaultSound}>
+  <div>
+    <label class="field-label" for={`${id}-sound`}>{label || t.common.sound}</label>
+    <div class="flex gap-2">
+      <select id={`${id}-sound`} class="select" data-sound>
+        {
+          sounds.map((s) => (
+            <option value={s.file} data-id={s.id} selected={s.id === defaultSound}>
+              {t.sounds[s.id as keyof typeof t.sounds]}
+            </option>
+          ))
+        }
+      </select>
+      <button type="button" class="btn btn-ghost btn-icon flex-none" data-test-sound aria-label={t.common.testSound} title={t.common.testSound}>
+        <Icon name="play" size={16} class="test-play" />
+        <Icon name="pause" size={16} class="test-stop hidden" />
+      </button>
+    </div>
+  </div>
+  {
+    showVolume && (
+      <div>
+        <label class="field-label flex items-center justify-between" for={`${id}-volume`}>
+          <span>{t.common.volume}</span>
+          <span class="font-normal text-ink-3" data-volume-out>80%</span>
+        </label>
+        <input id={`${id}-volume`} type="range" min="0" max="100" step="5" value="80" data-volume />
+      </div>
+    )
+  }
+</div>

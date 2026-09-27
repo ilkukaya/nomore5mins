@@ -1,0 +1,71 @@
+---
+import Icon from './Icon.astro';
+import products from '../data/products.json';
+import { LOCALES, useTranslations, type Locale } from '../i18n';
+import { amazonSearchUrl, marketplaceFor } from '../lib/amazon';
+import { AMAZON_TAGS } from '../config';
+
+interface Props {
+  locale: Locale;
+  group: keyof typeof products;
+  limit?: number;
+}
+const { locale, group, limit = 4 } = Astro.props;
+const t = useTranslations(locale);
+const marketplace = marketplaceFor(LOCALES[locale].amazon);
+const items = products[group].slice(0, limit).map((key) => {
+  const item = t.products.items[key as keyof typeof t.products.items];
+  return { key, ...item, href: amazonSearchUrl(item.query, marketplace) };
+});
+---
+
+<section class="hide-in-fs" aria-labelledby={`shelf-${group}`} data-amazon-shelf data-tags={JSON.stringify(AMAZON_TAGS)}>
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
+    <div>
+      <h2 id={`shelf-${group}`} class="h-section">{group === 'focus' ? t.products.titleFocus : t.products.title}</h2>
+      <p class="mt-1 text-sm text-ink-3">{t.products.subtitle}</p>
+    </div>
+  </div>
+  <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      items.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            data-query={item.query}
+            target="_blank"
+            rel="sponsored nofollow noopener"
+            class="panel-flat group flex h-full flex-col p-4 transition-colors hover:border-line-strong"
+          >
+            <span class="font-semibold">{item.name}</span>
+            <span class="mt-1 flex-1 text-sm text-ink-3">{item.desc}</span>
+            <span class="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-ink group-hover:text-accent">
+              {t.products.cta}
+              <Icon name="external" size={14} />
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="mt-3 text-xs text-ink-3">{t.products.disclosure}</p>
+</section>
+
+<script>
+  // Send visitors to their own country's Amazon store when we have a tag for it.
+  const REGION_TO_DOMAIN: Record<string, string> = {
+    US: 'com', GB: 'co.uk', IE: 'co.uk', CA: 'ca', MX: 'com.mx', BR: 'com.br', DE: 'de', AT: 'de', CH: 'de',
+    FR: 'fr', BE: 'com.be', ES: 'es', IT: 'it', NL: 'nl', PL: 'pl', SE: 'se', TR: 'com.tr', AE: 'ae', SA: 'sa',
+    EG: 'eg', IN: 'in', JP: 'co.jp', AU: 'com.au', SG: 'sg',
+  };
+  document.querySelectorAll<HTMLElement>('[data-amazon-shelf]').forEach((shelf) => {
+    const tags = JSON.parse(shelf.dataset.tags || '{}') as Record<string, string>;
+    const region = (navigator.language.split('-')[1] || '').toUpperCase();
+    const domain = REGION_TO_DOMAIN[region];
+    if (!domain || !tags[domain]) return;
+    shelf.querySelectorAll<HTMLAnchorElement>('a[data-query]').forEach((a) => {
+      const params = new URLSearchParams({ k: a.dataset.query!, tag: tags[domain] });
+      a.href = `https://www.amazon.${domain}/s?${params}`;
+    });
+  });
+</script>
